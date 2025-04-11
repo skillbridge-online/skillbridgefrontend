@@ -36,7 +36,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import DuplicateTestModal from "./DuplicateTestModal";
 
-const API_BASE_URL = "http://localhost:8000"; // Base URL
+import API from "./services";
 
 const ManageTestsPage = () => {
   const navigate = useNavigate(); // Get the navigate function
@@ -60,7 +60,7 @@ const ManageTestsPage = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/tests/`, {
+        const response = await API.get(`/api/tests/`, {
           headers: { Authorization: `Token ${token()}` },
         });
         setTests(response.data);
@@ -87,8 +87,8 @@ const ManageTestsPage = () => {
     try {
       const userToken = localStorage.getItem("user_token"); // Assuming userToken is stored in localStorage
   
-      const response = await axios.post(
-        `http://localhost:8000/api/tests/${selectedTest.id}/duplicate/`,
+      const response = await API.post(
+        `/api/tests/${selectedTest.id}/duplicate/`,
         {},
         {
           headers: {
@@ -120,7 +120,7 @@ const ManageTestsPage = () => {
   const handleDeleteTest = async () => {
     if (selectedTest) {
       try {
-        await axios.delete(`${API_BASE_URL}/api/tests/${selectedTest.id}/`, {
+        await API.delete(`/api/tests/${selectedTest.id}/`, {
           headers: { Authorization: `Token ${token()}` },
         });
         setTests(tests.filter((test) => test.id !== selectedTest.id));

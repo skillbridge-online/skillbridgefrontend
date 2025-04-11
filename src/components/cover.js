@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // ✅ Import useNavigate
 import { Container, Typography, Box, Button,navigate, CircularProgress } from "@mui/material";
-import axios from "axios";
+import API from "./services";
 const styles = {
     container: { 
         position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', 
@@ -24,13 +24,13 @@ const CoverPage = () => {
         const userToken = localStorage.getItem("user_token");
       
         if (uuid) {
-          axios.get(`http://localhost:8000/api/decode-test-uuid/${uuid}/`)
+          API.get(`/api/decode-test-uuid/${uuid}/`)
             .then(res => {
               const decodedId = res.data.test_id;
               setTestId(decodedId);
       
               // ✅ Fetch test data only after testId is available
-              return fetch(`http://localhost:8000/api/tests/${decodedId}/`, {
+              return fetch(`/api/tests/${decodedId}/`, {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",

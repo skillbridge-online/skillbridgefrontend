@@ -12,7 +12,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/Image20210206041010-1024x518.png";
 import axios from "axios"; // Import Axios
-
+import API from "./services";
 const TestHistory = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,7 +31,7 @@ const TestHistory = () => {
 
     try {
         // Fetch performance history
-        const response = await fetch("http://127.0.0.1:8000/api/performance-history/", {
+        const response = await API.get("api/performance-history/", {
             headers: { Authorization: `Token ${token}` },
         });
         if (!response.ok) {
@@ -73,7 +73,7 @@ const TestHistory = () => {
     }
 
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/performance-history/", performanceData, {
+      const response = await API.get("/api/performance-history/", performanceData, {
         headers: { Authorization: `Token ${token}` },
       });
 

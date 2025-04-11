@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "./services";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css'; // Core Swiper styles
 import 'swiper/css/navigation'; // Optional navigation styles
@@ -60,8 +60,8 @@ const HomePage = () => {
   useEffect(() => {
    
 
-    axios
-      .get("http://localhost:8000/api/performers/")
+    API
+      .get("/api/performers/")
       .then((response) => {
         setPerformers(response.data);
       })
@@ -69,8 +69,8 @@ const HomePage = () => {
         console.error("Error fetching spotlight performers:", error);
       });
 
-    axios
-      .get("http://localhost:8000/api/features/")
+    API
+      .get("/api/features/")
       .then((response) => {
         setFeatures(response.data);
       })
@@ -80,7 +80,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/testimonials/")
+    API.get("/api/testimonials/")
       .then(response => setTestimonials(response.data))
       .catch(error => console.error("Error fetching testimonials:", error));
   }, []);

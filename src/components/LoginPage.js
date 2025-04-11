@@ -16,8 +16,7 @@ import {
 import { Lock, AccountCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-
-const API_BASE_URL = 'http://127.0.0.1:8000/api'; // Ensure this matches your backend URL
+import API from "./services";
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
@@ -40,7 +39,7 @@ const LoginPage = () => {
         setLoading(true);
     
         try {
-            const response = await axios.post(`${API_BASE_URL}/login/`, {
+            const response = await API.post(`/api/login/`, {
                 username: formData.username,
                 password: formData.password,
             });

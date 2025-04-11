@@ -34,7 +34,7 @@ import logo from "../assets/Image20210206041010-1024x518.png";
 import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
-
+import API from "./services";
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
   const [newAnnouncement, setNewAnnouncement] = useState({
@@ -61,7 +61,7 @@ export default function AnnouncementsPage() {
       }
 
       try {
-        const response = await axios.get(`${API_BASE_URL}announcements/`, {
+        const response = await API.get(`/api/announcements/`, {
           headers: { Authorization: `Token ${token}` },
         });
         setAnnouncements(response.data);
@@ -88,8 +88,8 @@ export default function AnnouncementsPage() {
     }
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}announcements/`,
+      const response = await API.post(
+        `/api/announcements/`,
         newAnnouncement,
         {
           headers: {
@@ -119,7 +119,7 @@ export default function AnnouncementsPage() {
     }
 
     try {
-        await axios.delete(`${API_BASE_URL}announcements/${id}/`, {
+        await API.delete(`/api/announcements/${id}/`, {
             headers: { Authorization: `Token ${token}` },
         });
         console.log("Announcement deleted successfully!");

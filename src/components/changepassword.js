@@ -13,9 +13,8 @@ import {
 import { Lock, Email } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from "./services";
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api'; // Ensure this matches your backend URL
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();
@@ -59,7 +58,7 @@ const ChangePasswordPage = () => {
         }
 
         try {
-            const response = await axios.post(`${API_BASE_URL}/reset-password/`, {
+            const response = await API .post(`/api/reset-password/`, {
                 email: formData.email,
                 new_password: formData.newPassword,
             });

@@ -24,7 +24,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import logo from "../assets/Image20210206041010-1024x518.png";
 import { useNavigate } from 'react-router-dom';
-
+import API from "./services";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [image, setImage] = useState(null);
@@ -40,11 +40,11 @@ const Profile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('user_token');
 
-  const API_BASE_URL = 'http://127.0.0.1:8000/api';
-  const USER_PROFILE_URL = `${API_BASE_URL}/users/`;
-  const UPLOAD_PROFILE_PICTURE_URL = `${API_BASE_URL}/users/upload_profile_picture/`; 
-  const CHANGE_PASSWORD_URL = `${API_BASE_URL}/users/change_password/`;
-  const LOGOUT_URL = `${API_BASE_URL}/logout/`; 
+
+  const USER_PROFILE_URL = `/api/users/`;
+  const UPLOAD_PROFILE_PICTURE_URL = `/api/users/upload_profile_picture/`; 
+  const CHANGE_PASSWORD_URL = `/api/users/change_password/`;
+  const LOGOUT_URL = `/api/logout/`; 
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('user_data');
@@ -61,7 +61,7 @@ const Profile = () => {
   const fetchUserData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(USER_PROFILE_URL, {
+      const response = await API.get(USER_PROFILE_URL, {
         headers: {
           'Authorization': `Token ${token}`,
         },
@@ -91,7 +91,7 @@ const Profile = () => {
       formData.append('profile_picture', file);
 
       try {
-        const response = await fetch(UPLOAD_PROFILE_PICTURE_URL, {
+        const response = await API.get(UPLOAD_PROFILE_PICTURE_URL, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${token}`,
@@ -125,7 +125,7 @@ const Profile = () => {
     formData.append("linkedin", userData.linkedin);
 
     try {
-      const response = await fetch(`${USER_PROFILE_URL}${userData.id}/`, {
+      const response = await API.get(`${USER_PROFILE_URL}${userData.id}/`, {
         method: "PUT",
         headers: {
           "Authorization": `Token ${token}`,
@@ -154,7 +154,7 @@ const Profile = () => {
     if (newPassword === confirmPassword) {
       setLoading(true);
       try {
-        const response = await fetch(CHANGE_PASSWORD_URL, {
+        const response = await API.get(CHANGE_PASSWORD_URL, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${token}`,
@@ -184,7 +184,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(LOGOUT_URL, {
+      const response = await API.get(LOGOUT_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Token ${token}`,

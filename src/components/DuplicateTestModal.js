@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import axios from "axios";
+import API from "./services";
 
 const DuplicateTestModal = ({ open, handleClose, testLink }) => {
   const copyToClipboard = () => {

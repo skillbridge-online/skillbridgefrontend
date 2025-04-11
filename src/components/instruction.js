@@ -7,6 +7,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Webcam from "react-webcam";
 import axios from "axios";
+import API from "./services";
 
 const InstructionPage = () => {
     const { uuid,randomString } = useParams();
@@ -37,13 +38,13 @@ const InstructionPage = () => {
         const userToken = localStorage.getItem("user_token");
       
         if (uuid) {
-          axios.get(`http://localhost:8000/api/decode-test-uuid/${uuid}/`)
+          API.get(`/api/decode-test-uuid/${uuid}/`)
             .then(res => {
               const decodedId = res.data.test_id;
               setTestId(decodedId);
       
               // ✅ Fetch test data only after testId is available
-              return fetch(`http://localhost:8000/api/tests/${decodedId}/`, {
+              return fetch(`/api/tests/${decodedId}/`, {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
@@ -110,8 +111,8 @@ const InstructionPage = () => {
         const userToken = localStorage.getItem("user_token");
     
         try {
-            const response = await axios.post(
-                "http://127.0.0.1:8000/api/analyze-frame/",
+            const response = await API.post(
+                "/api/analyze-frame/",
                 formData,
                 {
                     headers: {
@@ -154,7 +155,7 @@ const InstructionPage = () => {
 
         const userToken = localStorage.getItem("user_token");
 
-        fetch(`http://localhost:8000/api/tests/${testId}/save_consent/`, {
+        fetch(`/api/tests/${testId}/save_consent/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

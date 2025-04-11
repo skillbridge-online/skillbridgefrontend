@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Grid } from "@mui/material";
-import axios from "axios";
+import API from "./services";
 
 const ContactPage = () => {
   const [name, setName] = useState("");
@@ -13,8 +13,8 @@ const ContactPage = () => {
   // Function to fetch admin notifications
   const fetchAdminNotifications = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
-      const response = await axios.get(`${apiUrl}/api/admin-notifications/`);
+   
+      const response = await API.get(`/api/admin-notifications/`);
       console.log("Admin Notifications:", response.data); // You can update the UI as needed
     } catch (error) {
       console.error("Error fetching admin notifications:", error);
@@ -34,8 +34,8 @@ const ContactPage = () => {
     }
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
-      await axios.post(`${apiUrl}/api/contact-submissions/`, {
+     
+      await API.post(`/api/contact-submissions/`, {
         name,
         email,
         message,

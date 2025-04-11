@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
-import axios from 'axios';
+import API from "./services";
 import {
   Dialog,
   DialogTitle,
@@ -23,8 +23,8 @@ const ImportQuestionsModal = ({ open, onClose, setSelectedImportTest }) => {
   // Step 1: Fetch public tests
   useEffect(() => {
     if (open && token) {
-      axios
-        .get('http://localhost:8000/api/tests/public/', {
+      API
+        .get('/api/tests/public/', {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -41,8 +41,8 @@ const ImportQuestionsModal = ({ open, onClose, setSelectedImportTest }) => {
     setQuestions([]);
     setLoading(true);
 
-    axios
-      .get(`http://localhost:8000/api/tests/${testId}/questions/`, {
+    API
+      .get(`/api/tests/${testId}/questions/`, {
         headers: {
           Authorization: `Token ${token}`,
         },

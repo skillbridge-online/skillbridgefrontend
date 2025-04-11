@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "./services";
 import { useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -101,7 +101,7 @@ const EditTestPage = () => {
     const questionId = questions[index].id;
 
     try {
-      await axios.delete(`${API_BASE_URL}${testId}/`, {
+      await API.delete(`/api/questions/${testId}/`, {
         headers: { Authorization: `Token ${token()}` },
       });
       const updatedQuestions = questions.filter((_, idx) => idx !== index);
@@ -140,7 +140,7 @@ const EditTestPage = () => {
     };
 
     try {
-      await axios.put(`${API_BASE_URL}${question.id}/`, updatedQuestion, {
+      await API.put(`/api/questions/${question.id}/`, updatedQuestion, {
         headers: { Authorization: `Token ${token()}` },
       });
       showSnackbar("Question saved successfully!");
@@ -163,7 +163,7 @@ const EditTestPage = () => {
   const fetchQuestions = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:8000/api/tests/${testId}/`, {
+      const response = await API.get(`/api/tests/${testId}/`, {
         headers: { Authorization: `Token ${token()}` },
       });
       

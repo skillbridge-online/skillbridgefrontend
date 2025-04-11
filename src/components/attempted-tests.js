@@ -26,7 +26,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api";
+import API from "./services";
 
 const AttemptedTest = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,7 +45,7 @@ const AttemptedTest = () => {
     const fetchUserStats = async () => {
       try {
         const token = localStorage.getItem("user_token");
-        const response = await axios.get(`${API_BASE_URL}/test-attempts/statistics/`, {
+        const response = await API.get(`/api/test-attempts/statistics/`, {
           headers: { Authorization: `Token ${token}` }
         });
 
@@ -66,7 +66,7 @@ const AttemptedTest = () => {
     const fetchAttemptedTests = async () => {
       try {
         const token = localStorage.getItem("user_token");
-        const response = await axios.get(`${API_BASE_URL}/attempted-tests/`, {
+        const response = await API.get(`/api/attempted-tests/`, {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -99,7 +99,7 @@ const AttemptedTest = () => {
 
     try {
       const token = localStorage.getItem("user_token");
-      const response = await axios.get(`${API_BASE_URL}/test-attempts/${testId}/export_certificate/`, {
+      const response = await API.get(`/api/test-attempts/${testId}/export_certificate/`, {
         responseType: 'blob',
         headers: {
           Authorization: `Token ${token}`,
@@ -124,7 +124,7 @@ const AttemptedTest = () => {
   const handleReview = async (testId) => {
     try {
         const token = localStorage.getItem("user_token");
-        const response = await axios.get(`${API_BASE_URL}/test-attempts/27/review/`, {
+        const response = await API.get(`/api/test-attempts/27/review/`, {
             headers: {
                 Authorization: `Token ${token}`,
             },
@@ -144,7 +144,7 @@ const AttemptedTest = () => {
   const fetchUserDetails = async () => {
     try {
         const token = localStorage.getItem("user_token");
-        const response = await axios.get(`${API_BASE_URL}/user-profile/`, {
+        const response = await API.get(`/api/user-profile/`, {
             headers: { Authorization: `Token ${token}` },
         });
         return {

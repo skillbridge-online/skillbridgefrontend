@@ -25,7 +25,7 @@ import {
 import { Menu as MenuIcon, Brightness4, Brightness7, AdminPanelSettings, Save, Undo, Notifications as NotificationsIcon, People, Security, Settings, AssignmentInd as AssignmentIndIcon, Lock as LockIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/Image20210206041010-1024x518.png";
-
+import API from "./services";
 const AdminSettingsPage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [userManagement, setUserManagement] = useState("Manage Users");
@@ -39,7 +39,7 @@ const AdminSettingsPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [settingsId, setSettingsId] = useState(null); // State to hold the settings ID
-
+  
   const navigate = useNavigate();
   const API_BASE_URL = 'http://127.0.0.1:8000/api/admin-settings/'; // Adjust the URL as needed
 
