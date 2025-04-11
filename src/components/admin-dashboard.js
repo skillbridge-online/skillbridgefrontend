@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'; 
-import axios from 'axios';
 import {
   Typography, Box, Grid, Avatar, Card, CardContent,Badge,Modal,
   AppBar, Toolbar, Button, IconButton, Drawer, List, ListItem, ListItemText, Tab, Tabs
@@ -19,7 +18,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
-
+import API from "./services";
 import { PieChart,Pie, Tooltip, Cell, Legend } from "recharts";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 const COLORS = ["#003366", "#0088FE", "#FFBB28", "#FF8042", "#00C49F"];
@@ -87,18 +86,18 @@ const AdminDashboard = () => {
       };
 
       try {
-        const userResponse = await axios.get('http://127.0.0.1:8000/api/userss/', { headers });
+        const userResponse = await API.get('/api/userss/', { headers });
         setUserData(userResponse.data);
-        const dashboardResponse = await axios.get('http://127.0.0.1:8000/api/dashboard-overview/', { headers });
+        const dashboardResponse = await API.get('/api/dashboard-overview/', { headers });
         setDashboardData(dashboardResponse.data);
-        const userManagementResponse = await axios.get("http://127.0.0.1:8000/api/user-management-stats/", { headers });
+        const userManagementResponse = await API.get("/api/user-management-stats/", { headers });
         setUserManagement(userManagementResponse.data);
-        const response = await axios.get('http://127.0.0.1:8000/api/tests-data/', { headers });
+        const response = await API.get('/api/tests-data/', { headers });
         setAnalyticsData(response.data);
 
         const [ feedbacksResponse] = await Promise.all([
           
-          axios.get('http://127.0.0.1:8000/api/feedbacks/', { headers }),
+          API.get('/api/feedbacks/', { headers }),
         ]);
 
         setUserManagement(userManagementResponse.data);
@@ -113,7 +112,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/tests-management/');
+        const response = await API.get('/api/tests-management/');
         setTests(response.data);
       } catch (error) {
         console.error("Error fetching tests:", error);
@@ -126,7 +125,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchCompletionRates = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/test-completion-rates/');
+        const response = await API.get('/api/test-completion-rates/');
         const completionRates = response.data;
 
         // Ensure completionRates is an object with expected structure
@@ -151,10 +150,10 @@ const AdminDashboard = () => {
 
   const fetchNotifications = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+     
       const userToken = localStorage.getItem("user_token"); // Assuming token is stored in localStorage
   
-      const response = await axios.get(`${apiUrl}/api/admin-notifications/`, {
+      const response = await API.get(`/api/admin-notifications/`, {
         headers: {
           Authorization: `Token ${userToken}`, // Adjust if using Bearer token
         },
@@ -177,11 +176,11 @@ const AdminDashboard = () => {
   
     // Mark all notifications as read
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+      
       const userToken = localStorage.getItem("user_token");
   
-      await axios.post(
-        `${apiUrl}/api/admin-notifications/mark-read/`, 
+      await API.post(
+        `api/admin-notifications/mark-read/`, 
         {}, 
         {
           headers: {
@@ -207,8 +206,8 @@ const AdminDashboard = () => {
 
     const userToken = localStorage.getItem("user_token");
 
-    axios
-      .get(`http://127.0.0.1:8000/api/users/${userData.id}/`, {
+    API
+      .get(`/api/users/${userData.id}/`, {
         headers: { Authorization: `Token ${userToken}` },
       })
       
