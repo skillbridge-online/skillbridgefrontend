@@ -26,7 +26,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import API from "./services";
+const API_BASE_URL = "https://onlineplatform.onrender.com/api";
 
 const AttemptedTest = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,7 +45,7 @@ const AttemptedTest = () => {
     const fetchUserStats = async () => {
       try {
         const token = localStorage.getItem("user_token");
-        const response = await API.get(`/api/test-attempts/statistics/`, {
+        const response = await axios.get(`${API_BASE_URL}/test-attempts/statistics/`, {
           headers: { Authorization: `Token ${token}` }
         });
 
@@ -66,7 +66,7 @@ const AttemptedTest = () => {
     const fetchAttemptedTests = async () => {
       try {
         const token = localStorage.getItem("user_token");
-        const response = await API.get(`/api/attempted-tests/`, {
+        const response = await axios.get(`${API_BASE_URL}/attempted-tests/`, {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -99,7 +99,7 @@ const AttemptedTest = () => {
 
     try {
       const token = localStorage.getItem("user_token");
-      const response = await API.get(`/api/test-attempts/${testId}/export_certificate/`, {
+      const response = await axios.get(`${API_BASE_URL}/test-attempts/${testId}/export_certificate/`, {
         responseType: 'blob',
         headers: {
           Authorization: `Token ${token}`,
@@ -124,7 +124,7 @@ const AttemptedTest = () => {
   const handleReview = async (testId) => {
     try {
         const token = localStorage.getItem("user_token");
-        const response = await API.get(`/api/test-attempts/27/review/`, {
+        const response = await axios.get(`${API_BASE_URL}/test-attempts/27/review/`, {
             headers: {
                 Authorization: `Token ${token}`,
             },
@@ -144,7 +144,7 @@ const AttemptedTest = () => {
   const fetchUserDetails = async () => {
     try {
         const token = localStorage.getItem("user_token");
-        const response = await API.get(`/api/user-profile/`, {
+        const response = await axios.get(`${API_BASE_URL}/user-profile/`, {
             headers: { Authorization: `Token ${token}` },
         });
         return {
@@ -214,7 +214,7 @@ const sendDataToAttemptedTestsAPI = async (testId, testTitle, testSubject, perce
           Skill Bridge Dashboard
           </Typography>
           <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
-          <Button color="inherit" onClick={() => navigate("/userprofile")}>User  Profile</Button>
+          <Button color="inherit" onClick={() => navigate("/userprofile")}>User Profile</Button>
           <Button color="inherit" onClick={() => navigate("/available-tests")}>Test List</Button>
           <Button color="inherit" onClick={() => navigate("/usersetting")}>Settings</Button>
           <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
@@ -239,17 +239,11 @@ const sendDataToAttemptedTestsAPI = async (testId, testTitle, testSubject, perce
             <ListItem button onClick={() => navigate('/user-dashboard')}>
               <ListItemText primary="Dashboard" />
             </ListItem>
-            <ListItem button onClick={() => navigate('/available-tests')}>
-              <ListItemText primary="Available Tests" />
-            </ListItem>
             <ListItem button onClick={() => navigate('/attempted-tests')}>
               <ListItemText primary="Attempted Tests" />
             </ListItem>
             <ListItem button onClick={() => navigate('/performancehistory')}>
               <ListItemText primary="Performance History" />
-            </ListItem>
-            <ListItem button onClick={() => navigate('/leaderboard')}>
-              <ListItemText primary="Leaderboard" />
             </ListItem>
             <ListItem button onClick={() => navigate('/usersetting')}>
               <ListItemText primary="Settings" />
@@ -312,10 +306,7 @@ const sendDataToAttemptedTestsAPI = async (testId, testTitle, testSubject, perce
                 <td style={styles.td}>{test.max_score}</td>
                 <td style={styles.td}>{test.status}</td>
                 <td style={styles.td}>{test.rank}</td>
-                <td style={styles.td}>
-                  <button onClick={() => handleReview(test.id)} style={styles.button}>Review</button>
-                  <button onClick={() => handleExportPDF(test.id)} style={styles.button}>Download Certificate</button>
-                </td>
+
               </tr>
             ))}
           </tbody>

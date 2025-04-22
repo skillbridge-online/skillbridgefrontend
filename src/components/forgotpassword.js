@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; 
-import API from "./services";
+import axios from 'axios'; 
 import {
     TextField,
     Button,
@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import { Lock, Email, Numbers } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = 'https://onlinetestcreationbackend.onrender.com/api';
 
 const ForgotPasswordPage = () => {
     const [step, setStep] = useState(1);
@@ -37,8 +39,8 @@ const ForgotPasswordPage = () => {
         }
         setLoading(true);
         try {
-            const response = await API.post(
-                `/api/forgot-password/request-otp/`,
+            const response = await axios.post(
+                `${API_BASE_URL}/forgot-password/request-otp/`,
                 { email: formData.email },
                 { headers: { Authorization: `Token ${localStorage.getItem('user_token')}` } }
             );
@@ -58,8 +60,8 @@ const ForgotPasswordPage = () => {
         }
         setLoading(true);
         try {
-            const response = await API.post(
-                `/api/forgot-password/verify-otp/`,
+            const response = await axios.post(
+                `${API_BASE_URL}/forgot-password/verify-otp/`,
                 { email: formData.email, otp: formData.otp },
                 { headers: { Authorization: `Token ${localStorage.getItem('user_token')}` } }
             );
@@ -96,7 +98,7 @@ const ForgotPasswordPage = () => {
 
         setLoading(true);
         try {
-            const response = await API.post(`/api/forgot-password/reset-password/`, {
+            const response = await axios.post(`${API_BASE_URL}/forgot-password/reset-password/`, {
                 email: formData.email,
                 new_password: formData.newPassword,
             });

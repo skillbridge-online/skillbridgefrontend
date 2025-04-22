@@ -16,7 +16,8 @@ import {
 import { Lock, AccountCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import API from "./services";
+
+const API_BASE_URL = 'https://onlinetestcreationbackend.onrender.com/api'; // Ensure this matches your backend URL
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
@@ -39,7 +40,7 @@ const LoginPage = () => {
         setLoading(true);
     
         try {
-            const response = await API.post(`/api/login/`, {
+            const response = await axios.post(`${API_BASE_URL}/login/`, {
                 username: formData.username,
                 password: formData.password,
             });

@@ -23,7 +23,7 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemText,TextField,
+  ListItemText,
 } from "@mui/material";
 import { MoreVert, Edit,ContentCopy, Delete, Menu as MenuIcon } from "@mui/icons-material";
 import TwitterIcon from '@mui/icons-material/Twitter';
@@ -31,17 +31,12 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import logo from "../assets/Image20210206041010-1024x518.png";
 import { useNavigate } from "react-router-dom";
-import ClearIcon from '@mui/icons-material/Clear';
-import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
-import DuplicateTestModal from "./DuplicateTestModal";
 
-import API from "./services";
+const API_BASE_URL = "https://onlineplatform.onrender.com"; // Base URL
 
 const ManageTestsPage = () => {
   const navigate = useNavigate(); // Get the navigate function
   const [tests, setTests] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [testLink, setTestLink] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -60,7 +55,7 @@ const ManageTestsPage = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await API.get(`/api/tests/`, {
+        const response = await axios.get(`${API_BASE_URL}/api/tests/`, {
           headers: { Authorization: `Token ${token()}` },
         });
         setTests(response.data);
@@ -87,8 +82,8 @@ const ManageTestsPage = () => {
     try {
       const userToken = localStorage.getItem("user_token"); // Assuming userToken is stored in localStorage
   
-      const response = await API.post(
-        `/api/tests/${selectedTest.id}/duplicate/`,
+      const response = await axios.post(
+        `https://onlineplatform.onrender.com/api/tests/${selectedTest.id}/duplicate/`,
         {},
         {
           headers: {
@@ -120,7 +115,7 @@ const ManageTestsPage = () => {
   const handleDeleteTest = async () => {
     if (selectedTest) {
       try {
-        await API.delete(`/api/tests/${selectedTest.id}/`, {
+        await axios.delete(`${API_BASE_URL}/api/tests/${selectedTest.id}/`, {
           headers: { Authorization: `Token ${token()}` },
         });
         setTests(tests.filter((test) => test.id !== selectedTest.id));
@@ -136,21 +131,22 @@ const ManageTestsPage = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  // Filter tests based on search query
-  const filteredTests = tests.filter(test =>
-    test.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AppBar position="fixed" sx={{ backgroundColor: "#003366", padding: "6px 16px" }}>
+      <AppBar position="fixed" sx={{ backgroundColor: "#003366" }}>
         <Toolbar>
           <IconButton color="inherit" onClick={toggleSidebar} edge="start" sx={{ marginRight: 2 }}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontSize: "1rem" }}>
-            Skill Bridge Online Test Platform
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          Skill Bridge Online Test Platform
           </Typography>
+          <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
+          <Button color="inherit" onClick={() => navigate("/aboutus")}>About Us</Button>
+          <Button color="inherit" onClick={() => navigate("/contactpage")}>Contact Us</Button>
+          <Button color="inherit" onClick={() => navigate("/register")}>Sign Up</Button>
+          <Button color="inherit" onClick={() => navigate("/login")}>Login</Button>
         </Toolbar>
       </AppBar>
 
@@ -181,10 +177,7 @@ const ManageTestsPage = () => {
             <ListItem button onClick={() => navigate("/manage-tests")}>
               <ListItemText primary="Manage Tests" />
             </ListItem>
-            <ListItem button onClick={() => navigate("/userresponse")}>
-              <ListItemText primary="Test Analytics" />
-            </ListItem>
-            <ListItem button onClick={() => navigate("/announcements")}>
+            <ListItem button onClick={() => navigate("/announcement")}>
               <ListItemText primary="Announcements" />
             </ListItem>
             <ListItem button onClick={() => navigate("/adminsettings")}>
@@ -205,87 +198,47 @@ const ManageTestsPage = () => {
         {loading ? (
           <CircularProgress />
         ) : (
-
-<>
-<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-  <TextField
-    label="Search Tests"
-    placeholder="Enter test name..."
-    variant="outlined"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    sx={{
-      width: { xs: '100%', sm: '300px' }, // Responsive width
-      '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-          borderColor: '#003366',
-        },
-        '&:hover fieldset': {
-          borderColor: '#00509E',
-        },
-        '&.Mui-focused fieldset': {
-          borderColor: '#00509E',
-        },
-      },
-    }}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <SearchIcon />
-        </InputAdornment>
-      ),
-      endAdornment: (
-        <InputAdornment position="end">
-          <IconButton onClick={() => setSearchQuery('')}>
-            <ClearIcon />
-          </IconButton>
-        </InputAdornment>
-      ),
-    }}
-  />
-</Box>
-            <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: "#003366" }}>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Serial No</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Test No</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Test Name</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Status</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Time Limit (Minutes)</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Duration Date</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Duration Time</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Created At</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredTests.map((test, index) => (
-                    <TableRow key={test.id} hover>
-                      <TableCell>{index + 1}</TableCell> {/* Serial Number */}
-                      <TableCell>{test.id}</TableCell>
-                      <TableCell>{test.title}</TableCell>
-                      <TableCell>{test.status || "Completed"}</TableCell>
-                      <TableCell>{test.total_time_limit}</TableCell>
-                      <TableCell>{test.start_date ? new Date(test.end_date).toLocaleDateString() : "N/A"}</TableCell>
-                      <TableCell>{test.due_time || "N/A"}</TableCell>
-                      <TableCell>{new Date(test.created_at).toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Tooltip title="More Actions">
-                          <IconButton
-                            onClick={(e) => handleMenuOpen(e, test)}
-                            sx={{ color: "#003366" }}
-                          >
-                            <MoreVert />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </>
+<TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
+  <Table>
+    <TableHead>
+      <TableRow sx={{ backgroundColor: "#003366" }}>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Serial No</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Test No</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Test Name</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Status</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Time Limit (Minutes)</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Duration Date</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Duration Time</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Created At</TableCell>
+        <TableCell sx={{ color: "white", fontWeight: "bold" }}>Actions</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {tests.map((test, index) => (
+        <TableRow key={test.id} hover>
+          <TableCell>{index + 1}</TableCell> {/* Serial Number */}
+          <TableCell>{test.id}</TableCell>
+          <TableCell>{test.title}</TableCell>
+          <TableCell>{test.status || "Completed"}</TableCell>
+          <TableCell>{test.total_time_limit}</TableCell>
+          <TableCell>{test.start_date ? new Date(test.end_date).toLocaleDateString() : "N/A"}</TableCell>
+          <TableCell>{test.due_time || "N/A"}</TableCell>
+          <TableCell>{new Date(test.created_at).toLocaleString()}</TableCell>
+          <TableCell>
+            <Tooltip title="More Actions">
+              <IconButton
+                onClick={(e) => handleMenuOpen(e, test)}
+                sx={{ color: "#003366" }}
+              >
+                <MoreVert />
+              </IconButton>
+            </Tooltip>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
         )}
 <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
   <MenuItem onClick={handleEditTest}>
@@ -295,8 +248,6 @@ const ManageTestsPage = () => {
   <MenuItem onClick={handleDuplicateTest}>
     <ContentCopy fontSize="small" sx={{ mr: 1 }} /> Duplicate Test
   </MenuItem>
-
-  <DuplicateTestModal open={modalOpen} handleClose={() => setModalOpen(false)} testLink={testLink} />
 
   <MenuItem onClick={handleDeleteTest}>
     <Delete fontSize="small" sx={{ mr: 1 }} /> Delete

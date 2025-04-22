@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
-import API from "./services";
+import axios from "axios";
 
 const WebcamProctoring = ({ studentId, testId }) => {
     const videoRef = useRef(null);
@@ -129,8 +129,8 @@ const WebcamProctoring = ({ studentId, testId }) => {
         console.log("📤 Sending Malpractice Data:", data); // Debugging
 
         try {
-            const response = await API.post(
-                "/api/log-malpractice/",
+            const response = await axios.post(
+                "https://onlinetestcreationbackend.onrender.com/api/log-malpractice/",
                 data,
                 {
                     headers: {
@@ -358,8 +358,8 @@ const WebcamProctoring = ({ studentId, testId }) => {
 
                     try {
                         const token = localStorage.getItem("usertoken"); // Retrieve user token
-                        const response = await API.post(
-                            "/api/log-malpractice/",
+                        const response = await axios.post(
+                            "https://onlinetestcreationbackend.onrender.com/api/log-malpractice/",
                             formData,
                             {
                                 headers: {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API from "./services";
+import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css'; // Core Swiper styles
 import 'swiper/css/navigation'; // Optional navigation styles
@@ -60,8 +60,8 @@ const HomePage = () => {
   useEffect(() => {
    
 
-    API
-      .get("/api/performers/")
+    axios
+      .get("https://onlinetestcreationbackend.onrender.com/api/performers/")
       .then((response) => {
         setPerformers(response.data);
       })
@@ -69,8 +69,8 @@ const HomePage = () => {
         console.error("Error fetching spotlight performers:", error);
       });
 
-    API
-      .get("/api/features/")
+    axios
+      .get("https://onlinetestcreationbackend.onrender.com/api/features/")
       .then((response) => {
         setFeatures(response.data);
       })
@@ -80,7 +80,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    API.get("/api/testimonials/")
+    axios.get("https://onlinetestcreationbackend.onrender.com/api/testimonials/")
       .then(response => setTestimonials(response.data))
       .catch(error => console.error("Error fetching testimonials:", error));
   }, []);
@@ -127,7 +127,7 @@ const HomePage = () => {
             backgroundColor: "#003366",
           },
         }}
-        onClick={() => navigate('/Registerpage')} // Commented out to avoid error
+        onClick={() => navigate('/register')} // Commented out to avoid error
       >
         Get Started
       </Button>
@@ -374,7 +374,7 @@ const HomePage = () => {
  
   // FAQ Data Array
   const faqData = [
-    { question: "How can I register on Skill Bridge?", answer: "You can register by clicking on the 'Sign Up' button on the homepage." },
+    { question: "How can I register on skill Bridge?", answer: "You can register by clicking on the 'Sign Up' button on the homepage." },
     { question: "How do I start a test?", answer: "Once logged in, you can browse the test list and start any test you like." },
     { question: "What happens if I don't complete a test?", answer: "Your progress will be saved, and you can continue the test from where you left off." }
   ];
@@ -488,7 +488,7 @@ const HomePage = () => {
             }}
           >
             Join thousands of users who are improving their skills on{" "}
-            <b style={{ color: "#0077b6" }}>Vdart</b> today. Get access to
+            <b style={{ color: "#0077b6" }}>Skill Bridge</b> today. Get access to
             high-quality tests, real-time analytics, and AI-powered
             recommendations.
           </Typography>
@@ -564,7 +564,7 @@ const HomePage = () => {
                 boxShadow: "0 6px 15px rgba(0, 119, 182, 0.4)",
               },
             }}
-            onClick={() => navigate("/Registerpage")}
+            onClick={() => navigate("/register")}
           >
             Sign Up Now
           </Button>
@@ -585,8 +585,8 @@ const HomePage = () => {
           <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
           <Button color="inherit" onClick={() => navigate("/aboutus")}>About Us</Button>
           <Button color="inherit" onClick={() => navigate("/contactpage")}>Contact Us</Button>
-          <Button color="inherit" onClick={() => navigate("/RegisterPage")}>Sign Up</Button>
-          <Button color="inherit" onClick={() => navigate("/LoginPage")}>Login</Button>
+          <Button color="inherit" onClick={() => navigate("/register")}>Sign Up</Button>
+          <Button color="inherit" onClick={() => navigate("/login")}>Login</Button>
         </Toolbar>
       </AppBar>
 
@@ -605,20 +605,16 @@ const HomePage = () => {
             />
           )}
            <List>
-            <ListItem button onClick={() => navigate('/')}>
-              <ListItemText primary="Home" />
+            <ListItem>
+            <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
             </ListItem>
-            <ListItem button onClick={() => navigate('/Loginpage')}>
-              <ListItemText primary="Login" />
+            <ListItem> <Button color="inherit" onClick={() => navigate("/login")}>Login</Button>
             </ListItem>
-            <ListItem button onClick={() => navigate('/Registerpage')}>
-              <ListItemText primary="Register" />
+            <ListItem ><Button color="inherit" onClick={() => navigate("/register")}>Register</Button>
             </ListItem>
-            <ListItem button onClick={() => navigate('/aboutus')}>
-              <ListItemText primary="About Us" />
+            <ListItem> <Button color="inherit" onClick={() => navigate("/aboutus")}>About Us</Button>
             </ListItem>
-            <ListItem button onClick={() => navigate('/contactpage')}>
-              <ListItemText primary="Contact Us" />
+            <ListItem> <Button color="inherit" onClick={() => navigate("/contactpage")}>Contact Us</Button>
             </ListItem>
           </List>
         </Box>

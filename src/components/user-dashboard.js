@@ -57,7 +57,7 @@ const onClose = () => {
       };
 
       try {
-        const response = await axios.get("http://localhost:8000/api/achievements/", { headers });
+        const response = await axios.get("https://onlinetestcreationbackend.onrender.com/api/achievements/", { headers });
         setAchievements(response.data.achievements || []); // Ensure it's an array
       } catch (err) {
         console.error("Error fetching achievements:", err);
@@ -77,10 +77,10 @@ const onClose = () => {
   
       try {
         const [userRes, activitiesRes, testsRes, notificationsRes] = await Promise.all([
-          axios.get("http://localhost:8000/api/userss/", { headers }),
-          axios.get("http://localhost:8000/api/recent-activities/", { headers }),
-          axios.get("http://localhost:8000/api/completed-tests/", { headers }),
-          axios.get("http://localhost:8000/api/notifications/", { headers })
+          axios.get("https://onlinetestcreationbackend.onrender.com/api/userss/", { headers }),
+          axios.get("https://onlinetestcreationbackend.onrender.com/api/recent-activities/", { headers }),
+          axios.get("https://onlinetestcreationbackend.onrender.com/api/completed-tests/", { headers }),
+          axios.get("https://onlinetestcreationbackend.onrender.com/api/notifications/", { headers })
         ]);
   
         setUserData(userRes.data);
@@ -107,7 +107,7 @@ const onClose = () => {
       const userToken = localStorage.getItem("user_token");
   
       axios
-        .get(`http://127.0.0.1:8000/api/users/${userData.id}/`, {
+        .get(`https://onlinetestcreationbackend.onrender.com/api/users/${userData.id}/`, {
           headers: { Authorization: `Token ${userToken}` },
         })
         .then((response) => {
@@ -128,7 +128,7 @@ const onClose = () => {
         };
   
         try {
-          const response = await axios.get("http://localhost:8000/api/performance-stats/", { headers });
+          const response = await axios.get("https://onlinetestcreationbackend.onrender.com/api/performance-stats/", { headers });
           setPerformanceStats(response.data || []); // Ensure it's an array
         } catch (error) {
           console.error("Error fetching performance stats:", error);
@@ -169,7 +169,7 @@ const onClose = () => {
       };
   
       try {
-        const response = await axios.get("http://localhost:8000/api/notifications/", { headers });
+        const response = await axios.get("https://onlinetestcreationbackend.onrender.com/api/notifications/", { headers });
         // Remove duplicate notifications by filtering unique announcement titles
         const allNotifications = response.data;
         const uniqueNotifications = allNotifications.reduce((acc, notif) => {
@@ -199,7 +199,7 @@ const onClose = () => {
       };
     
       try {
-        await axios.post("http://localhost:8000/api/notifications/mark-as-read/", {}, { headers });
+        await axios.post("https://onlinetestcreationbackend.onrender.com/api/notifications/mark-as-read/", {}, { headers });
     
         // Update UI: Mark notifications as read
         setNotifications((prevNotifications) =>
@@ -230,7 +230,7 @@ const onClose = () => {
     };
   
     try {
-      await axios.delete(`http://localhost:8000/api/recent-activities/${activityId}/`, { headers });
+      await axios.delete(`https://onlinetestcreationbackend.onrender.com/api/recent-activities/${activityId}/`, { headers });
   
       // Remove the deleted activity from state
       setRecentActivities(recentActivities.filter(activity => activity.id !== activityId));
@@ -251,9 +251,9 @@ const onClose = () => {
     </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>Skill Bridge Dashboard</Typography>
           <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
-          <Button color="inherit" onClick={() => navigate("/userprofile")}>User  Profile</Button>
-          <Button color="inherit" onClick={() => navigate("/test-list")}>Test List</Button>
-          <Button color="inherit" onClick={() => navigate("/settings")}>Settings</Button>
+          <Button color="inherit" onClick={() => navigate("/userprofile")}>User Profile</Button>
+          <Button color="inherit" onClick={() => navigate("/manage-tests")}>Test List</Button>
+          <Button color="inherit" onClick={() => navigate("/usersetting")}>Settings</Button>
           <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
           <IconButton color="inherit" onClick={handleOpenNotifications}>
           <Badge badgeContent={notifications.filter(n => !n.is_read).length} color="error">
@@ -268,11 +268,10 @@ const onClose = () => {
           <img src={logo} alt="Logo" style={{ maxWidth: "100%", height: "auto", marginBottom: "16px" }} />
           <List>
             <ListItem button onClick={() => navigate('/user-dashboard')}><ListItemText primary="Dashboard" /></ListItem>
-            <ListItem button onClick={() => navigate('/available-tests')}><ListItemText primary="Available Tests" /></ListItem>
             <ListItem button onClick={() => navigate('/attempted-tests')}><ListItemText primary="Attempted Tests" /></ListItem>
-            <ListItem button onClick={() => navigate('/Testcreation')}><ListItemText primary="TestCreation" /></ListItem>
+            <ListItem button onClick={() => navigate('/Testcreation')}><ListItemText primary="Test Creation" /></ListItem>
             <ListItem button onClick={() => navigate('/performancehistory')}><ListItemText primary="Performance History" /></ListItem>
-            <ListItem button onClick={() => navigate('/leaderboard')}><ListItemText primary="Leaderboard" /></ListItem>
+
             <ListItem button onClick={() => navigate('/usersetting')}><ListItemText primary="Settings" /></ListItem>
             <ListItem button onClick={() => navigate('/logout')}><ListItemText primary="Logout" /></ListItem>
           </List>

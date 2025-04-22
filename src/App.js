@@ -30,7 +30,7 @@ import ForgotPasswordPage from './components/forgotpassword';
 import ChangePasswordPage from './components/changepassword';
 import CoverPage from "./components/cover";
 import ProctoringExitPage from "./components/exit";
-import TestReport from "./components/TestReport";
+
 import PreTestForm from "./components/testform";
 import AdminProfile from "./components/admin-profile";
 
@@ -43,7 +43,7 @@ const App = () => {
     useEffect(() => {
       const userToken = localStorage.getItem("user_token"); // Retrieve the user token from local storage
   
-      fetch("http://localhost:8000/api/tests/", {
+      fetch("https://onlineplatform.onrender.com/api/tests/", {
           method: "GET",
           headers: {
               "Authorization": `Token ${userToken}`, // Include the token in the Authorization header
@@ -92,8 +92,7 @@ const App = () => {
           <Route path="/adminSettings" element={<AdminSettingsPage />} />
           <Route path="/announcement" element={<AnnouncementsPage />} />
           <Route path="/attempted-tests" element={<AttemptedTest />} />
-          <Route path="/test-report/:testId" element={<TestReport />} />
-         
+          
           <Route path="/smartbridge/online-test-assessment/:uuid/instructions" element={<InstructionPage />} />
         </Routes>
       </BrowserRouter>

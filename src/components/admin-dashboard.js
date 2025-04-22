@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'; 
+import axios from 'axios';
 import {
   Typography, Box, Grid, Avatar, Card, CardContent,Badge,Modal,
   AppBar, Toolbar, Button, IconButton, Drawer, List, ListItem, ListItemText, Tab, Tabs
@@ -18,7 +19,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
-import API from "./services";
+
 import { PieChart,Pie, Tooltip, Cell, Legend } from "recharts";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 const COLORS = ["#003366", "#0088FE", "#FFBB28", "#FF8042", "#00C49F"];
@@ -86,18 +87,18 @@ const AdminDashboard = () => {
       };
 
       try {
-        const userResponse = await API.get('/api/userss/', { headers });
+        const userResponse = await axios.get('https://onlinetestcreationbackend.onrender.com/api/userss/', { headers });
         setUserData(userResponse.data);
-        const dashboardResponse = await API.get('/api/dashboard-overview/', { headers });
+        const dashboardResponse = await axios.get('https://onlinetestcreationbackend.onrender.com/api/dashboard-overview/', { headers });
         setDashboardData(dashboardResponse.data);
-        const userManagementResponse = await API.get("/api/user-management-stats/", { headers });
+        const userManagementResponse = await axios.get("https://onlinetestcreationbackend.onrender.com/api/user-management-stats/", { headers });
         setUserManagement(userManagementResponse.data);
-        const response = await API.get('/api/tests-data/', { headers });
+        const response = await axios.get('https://onlinetestcreationbackend.onrender.com/api/tests-data/', { headers });
         setAnalyticsData(response.data);
 
         const [ feedbacksResponse] = await Promise.all([
           
-          API.get('/api/feedbacks/', { headers }),
+          axios.get('https://onlinetestcreationbackend.onrender.com/api/feedbacks/', { headers }),
         ]);
 
         setUserManagement(userManagementResponse.data);
@@ -112,7 +113,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await API.get('/api/tests-management/');
+        const response = await axios.get('https://onlinetestcreationbackend.onrender.com/api/tests-management/');
         setTests(response.data);
       } catch (error) {
         console.error("Error fetching tests:", error);
@@ -125,7 +126,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchCompletionRates = async () => {
       try {
-        const response = await API.get('/api/test-completion-rates/');
+        const response = await axios.get('https://onlinetestcreationbackend.onrender.com/api/test-completion-rates/');
         const completionRates = response.data;
 
         // Ensure completionRates is an object with expected structure
@@ -150,10 +151,10 @@ const AdminDashboard = () => {
 
   const fetchNotifications = async () => {
     try {
-     
+      const apiUrl = process.env.REACT_APP_API_URL || "https://onlinetestcreationbackend.onrender.com";
       const userToken = localStorage.getItem("user_token"); // Assuming token is stored in localStorage
   
-      const response = await API.get(`/api/admin-notifications/`, {
+      const response = await axios.get(`${apiUrl}/api/admin-notifications/`, {
         headers: {
           Authorization: `Token ${userToken}`, // Adjust if using Bearer token
         },
@@ -176,11 +177,11 @@ const AdminDashboard = () => {
   
     // Mark all notifications as read
     try {
-      
+      const apiUrl = process.env.REACT_APP_API_URL || "https://onlinetestcreationbackend.onrender.com";
       const userToken = localStorage.getItem("user_token");
   
-      await API.post(
-        `api/admin-notifications/mark-read/`, 
+      await axios.post(
+        `${apiUrl}/api/admin-notifications/mark-read/`, 
         {}, 
         {
           headers: {
@@ -206,8 +207,8 @@ const AdminDashboard = () => {
 
     const userToken = localStorage.getItem("user_token");
 
-    API
-      .get(`/api/users/${userData.id}/`, {
+    axios
+      .get(`https://onlinetestcreationbackend.onrender.com/api/users/${userData.id}/`, {
         headers: { Authorization: `Token ${userToken}` },
       })
       
@@ -310,13 +311,33 @@ const AdminDashboard = () => {
               }}
             />
           )}
-          <List>
-            {["Dashboard", "Test Creation", "Question Creation", "Manage Tests", "Test Analytics", "Announcements", "Settings", "Logout"].map((text, index) => (
-              <ListItem button key={text} onClick={() => navigate(`/${text.toLowerCase().replace(" ", "")}`)}>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
+        <List>
+          <ListItem button onClick={() => navigate('/admin-dashboard')}>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/testcreation')}>
+            <ListItemText primary="Test Creation" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/questioncreation')}>
+            <ListItemText primary="Question Creation" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/manage-tests')}>
+            <ListItemText primary="Manage Tests" />
+          </ListItem>
+
+          <ListItem button onClick={() => navigate('/announcement')}>
+            <ListItemText primary="Announcements" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/adminsettings')}>
+            <ListItemText primary="Settings" />
+          </ListItem>
+          <ListItem button onClick={() => {
+            localStorage.removeItem('user_token');
+            navigate('/login');
+          }}>
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List>
         </Box>
       </Drawer>
 
@@ -331,8 +352,8 @@ const AdminDashboard = () => {
           </Typography>
           <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
           <Button color="inherit" onClick={() => navigate("/admin-profile")}>Admin Profile</Button>
-          <Button color="inherit" onClick={() => navigate("/test-list")}>Test List</Button>
-          <Button color="inherit" onClick={() => navigate("/settings")}>Settings</Button>
+          <Button color="inherit" onClick={() => navigate("/manage-tests")}>Test List</Button>
+          <Button color="inherit" onClick={() => navigate("/adminsettings")}>Settings</Button>
           <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
 
 {/* Notification Bell Icon */}
@@ -603,7 +624,7 @@ const AdminDashboard = () => {
                 ))}
               </Pie>
               <Tooltip />
-              <Legend />
+              
             </PieChart>
           ) : (
             <Typography sx={{ color: "gray", fontSize: "14px", textAlign: "center" }}>

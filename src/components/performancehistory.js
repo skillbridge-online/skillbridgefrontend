@@ -10,9 +10,9 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/Image20210206041010-1024x518.png";
+import logo from "../assets/Image20250320122406.png";
 import axios from "axios"; // Import Axios
-import API from "./services";
+
 const TestHistory = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,7 +31,7 @@ const TestHistory = () => {
 
     try {
         // Fetch performance history
-        const response = await API.get("api/performance-history/", {
+        const response = await fetch("https://onlinetestcreationbackend.onrender.com/api/performance-history/", {
             headers: { Authorization: `Token ${token}` },
         });
         if (!response.ok) {
@@ -73,7 +73,7 @@ const TestHistory = () => {
     }
 
     try {
-      const response = await API.get("/api/performance-history/", performanceData, {
+      const response = await axios.get("https://onlinetestcreationbackend.onrender.com/api/performance-history/", performanceData, {
         headers: { Authorization: `Token ${token}` },
       });
 
@@ -123,11 +123,11 @@ const TestHistory = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontSize: "1rem" }}>
-            Vdart Online Test Platform
+            SkillBridge Online Test Platform
           </Typography>
           <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
-          <Button color="inherit" onClick={() => navigate("/User  Profile")}>User  Profile</Button>
-          <Button color="inherit" onClick={() => navigate("/availabletest")}>Test List</Button>
+          <Button color="inherit" onClick={() => navigate("/userprofile")}>User Profile</Button>
+          <Button color="inherit" onClick={() => navigate("/attempted-tests")}>Test List</Button>
           <Button color="inherit" onClick={() => navigate("/usersetting")}>Setting</Button>
           <Button color="inherit" onClick={() => navigate("/Logout")}>Logout</Button>
         </Toolbar>
@@ -152,15 +152,13 @@ const TestHistory = () => {
             <ListItem button onClick={() => navigate('/user-dashboard')}>
               <ListItemText primary="Dashboard" />
             </ListItem>
-            <ListItem button onClick={() => navigate('/available-tests')}>
-              <ListItemText primary="Available Tests" />
-            </ListItem>
+
             <ListItem button onClick={() => navigate('/attempted-tests')}>
               <ListItemText primary="Attempted Tests" />
             </ListItem>
-            <ListItem button onClick={() => navigate('/leaderboard')}>
-              <ListItemText primary="Leaderboard" />
-            </ListItem>
+                        <ListItem button onClick={() => navigate('/performancehistory')}>
+                          <ListItemText primary="Performance History" />
+                        </ListItem>
             <ListItem button onClick={() => navigate('/usersetting')}>
               <ListItemText primary="Settings" />
             </ListItem>
@@ -205,7 +203,7 @@ const TestHistory = () => {
           }}
         >
           <Typography variant="body2" sx={{ color: "white", marginBottom: "2px" }}>
-            © {new Date().getFullYear()} Vdart Online Test Platform. All rights reserved.
+            © {new Date().getFullYear()} SkillBridge Online Test Platform. All rights reserved.
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "2px" }}>
             <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}><TwitterIcon /></IconButton>

@@ -31,7 +31,7 @@ import {
   Menu as MenuIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import logo from "../assets/Image20210206041010-1024x518.png";
+import logo from "../assets/Image20250320122406.png";
 import TwitterIcon from '@mui/icons-material/Twitter'; // Import Twitter icon
 import FacebookIcon from '@mui/icons-material/Facebook'; // Import Facebook icon
 import InstagramIcon from '@mui/icons-material/Instagram'; // Import Instagram icon
@@ -59,7 +59,7 @@ const SettingsCustomizationPage = () => {
       const headers = { Authorization: `Token ${token}` };
 
       try {
-        const response = await axios.get("http://localhost:8000/api/user-settings/", { headers });
+        const response = await axios.get("https://onlinetestcreationbackend.onrender.com/api/user-settings/", { headers });
         const settings = response.data;
         setDarkMode(settings.dark_mode);
         setTestAccess(settings.test_access);
@@ -80,7 +80,7 @@ const SettingsCustomizationPage = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.post("http://localhost:8000/api/user-settings/reset/", {}, { headers });
+      await axios.post("https://onlinetestcreationbackend.onrender.com/api/user-settings/reset/", {}, { headers });
       // Reset local state to default values
       setDarkMode(false);
       setTestAccess("public");
@@ -102,7 +102,7 @@ const SettingsCustomizationPage = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.put("http://localhost:8000/api/user-settings/", {
+      await axios.put("https://onlinetestcreationbackend.onrender.com/api/user-settings/", {
         dark_mode: darkMode,
         test_access: testAccess,
         integration: integration,
@@ -136,34 +136,30 @@ const SettingsCustomizationPage = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Vdart Dashboard
+            SkillBridge Online Test Platform
           </Typography>
           <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
           <Button color="inherit" onClick={() => navigate("/userprofile")}>User Profile</Button>
-          <Button color="inherit" onClick={() => navigate("/available-tests")}>Test List</Button>
+          <Button color="inherit" onClick={() => navigate("/attempted-tests")}>Test List</Button>
           <Button color="inherit" onClick={() => navigate("/usersetting")}>Settings</Button>
           <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
         </Toolbar>
       </AppBar>
       <Drawer open={isSidebarOpen} onClose={toggleSidebar}>
         <Box sx={{ width: 220, textAlign: "center", padding: "16px" }}>
-          <img src={logo} alt="Logo" style={{ maxWidth: "80%", height: "auto", marginBottom: "12px" }} />
+          <img src={logo} alt="Logo" style={{ maxWidth: "100%", height: "auto", marginBottom: "12px" }} />
           <List>
             <ListItem button onClick={() => navigate('/user-dashboard')}>
               <ListItemText primary="Dashboard" />
             </ListItem>
-            <ListItem button onClick={() => navigate('/available-tests')}>
-              <ListItemText primary="Available Tests" />
-            </ListItem>
+
             <ListItem button onClick={() => navigate('/attempted-tests')}>
               <ListItemText primary="Attempted Tests" />
             </ListItem>
             <ListItem button onClick={() => navigate('/performancehistory')}>
               <ListItemText primary="Performance History" />
             </ListItem>
-            <ListItem button onClick={() => navigate('/leaderboard')}>
-              <ListItemText primary="Leaderboard" />
-            </ListItem>
+
             <ListItem button onClick={() => navigate('/usersetting')}>
               <ListItemText primary="Settings" />
             </ListItem>
@@ -363,27 +359,27 @@ const SettingsCustomizationPage = () => {
         message={snackbarMessage}
       />
       <Box
-          sx={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "#003366",
-            color: "white",
-            padding: "16px",
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="body2" sx={{ color: "white", marginBottom: "2px" }}>
-            © {new Date().getFullYear()} Vdart Online Test Platform. All rights reserved.
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "2px" }}>
-            <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}><TwitterIcon /></IconButton>
-            <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}><FacebookIcon /></IconButton>
-            <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}><InstagramIcon /></IconButton>
-          </Box>
-        </Box>
-      
+                sx={{
+                  position: "fixed",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  backgroundColor: "#003366",
+                  color: "white",
+                  padding: "16px",
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="body2" sx={{ color: "white", marginBottom: "2px" }}>
+                  © {new Date().getFullYear()} SkillBridge Online Test Platform. All rights reserved.
+                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "2px" }}>
+                  <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}><TwitterIcon /></IconButton>
+                  <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}><FacebookIcon /></IconButton>
+                  <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}><InstagramIcon /></IconButton>
+                </Box>
+              </Box>
+            
     </Box>
   );
 };

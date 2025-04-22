@@ -13,8 +13,9 @@ import {
 import { Lock, Email } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
-import API from "./services";
+import axios from 'axios';
 
+const API_BASE_URL = 'https://onlinetestcreationbackend.onrender.com/api'; // Ensure this matches your backend URL
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();
@@ -58,7 +59,7 @@ const ChangePasswordPage = () => {
         }
 
         try {
-            const response = await API .post(`/api/reset-password/`, {
+            const response = await axios.post(`${API_BASE_URL}/reset-password/`, {
                 email: formData.email,
                 new_password: formData.newPassword,
             });

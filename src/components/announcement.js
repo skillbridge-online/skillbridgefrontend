@@ -34,7 +34,7 @@ import logo from "../assets/Image20210206041010-1024x518.png";
 import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import API from "./services";
+
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
   const [newAnnouncement, setNewAnnouncement] = useState({
@@ -48,7 +48,7 @@ export default function AnnouncementsPage() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const API_BASE_URL = "http://127.0.0.1:8000/api/"; // Ensure your Django URL config is correct
+  const API_BASE_URL = "https://onlineplatform.onrender.com/api/"; // Ensure your Django URL config is correct
   const token = localStorage.getItem("user_token");
   const navigate = useNavigate();
 
@@ -61,7 +61,7 @@ export default function AnnouncementsPage() {
       }
 
       try {
-        const response = await API.get(`/api/announcements/`, {
+        const response = await axios.get(`${API_BASE_URL}announcements/`, {
           headers: { Authorization: `Token ${token}` },
         });
         setAnnouncements(response.data);
@@ -75,29 +75,32 @@ export default function AnnouncementsPage() {
     fetchAnnouncements();
   }, [token]);
 
-  // Function to create a new announcement
   const handleCreateAnnouncement = async () => {
     if (!newAnnouncement.title || !newAnnouncement.message || !newAnnouncement.date) {
       alert("Please fill in all required fields before posting.");
       return;
     }
-
-    if (!token) {
-      console.error("No token found in localStorage.");
+  
+    // Retrieve user_token from localStorage
+    const userToken = localStorage.getItem("user_token");
+  
+    if (!userToken) {
+      console.error("No user_token found in localStorage.");
       return;
     }
-
+  
     try {
-      const response = await API.post(
-        `/api/announcements/`,
+      const response = await axios.post(
+        `${API_BASE_URL}announcements/`,
         newAnnouncement,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
+            Authorization: `Token ${userToken}`, // Use user_token from localStorage
           },
         }
       );
+  
       setAnnouncements([...announcements, response.data]);
       setNewAnnouncement({
         title: "",
@@ -112,6 +115,7 @@ export default function AnnouncementsPage() {
       console.error("Error creating announcement:", error.message);
     }
   };
+  
   const handleDeleteAnnouncement = async (id) => {
     if (!id) {
         console.error("Error: Announcement ID is undefined!");
@@ -119,7 +123,7 @@ export default function AnnouncementsPage() {
     }
 
     try {
-        await API.delete(`/api/announcements/${id}/`, {
+        await axios.delete(`${API_BASE_URL}announcements/${id}/`, {
             headers: { Authorization: `Token ${token}` },
         });
         console.log("Announcement deleted successfully!");
@@ -155,8 +159,8 @@ export default function AnnouncementsPage() {
           </Typography>
           <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
           <Button color="inherit" onClick={() => navigate("/admin-profile")}>Admin Profile</Button>
-          <Button color="inherit" onClick={() => navigate("/test-list")}>Test List</Button>
-          <Button color="inherit" onClick={() => navigate("/settings")}>Settings</Button>
+          <Button color="inherit" onClick={() => navigate("/manage-tests")}>Test List</Button>
+          <Button color="inherit" onClick={() => navigate("/adminsettings")}>Settings</Button>
           <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
         </Toolbar>
       </AppBar>
@@ -185,9 +189,6 @@ export default function AnnouncementsPage() {
                       </ListItem>
                       <ListItem button onClick={() => navigate('/manage-tests')}>
                         <ListItemText primary="Manage Tests" />
-                      </ListItem>
-                      <ListItem button onClick={() => navigate('/userresponse')}>
-                        <ListItemText primary="Test Analytics" />
                       </ListItem>
                       <ListItem button onClick={() => navigate('/announcement')}>
                         <ListItemText primary="Announcements" />

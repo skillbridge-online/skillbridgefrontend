@@ -11,7 +11,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
-import logo from "../assets/Image20210206041010-1024x518.png";
+import logo from "../assets/Image20250320122406.png";
 const QuestionCreator = () => {
   const [questions, setQuestions] = useState([]);
   const [newOption, setNewOption] = useState('');
@@ -28,7 +28,7 @@ const QuestionCreator = () => {
     if (!token) return;
   
     try {
-      const response = await axios.get('http://localhost:8000/api/questions/', {
+      const response = await axios.get('https://onlinetestcreationbackend.onrender.com/api/questions/', {
         headers: { 'Authorization': `Token ${token}` },
       });
   
@@ -78,7 +78,7 @@ const QuestionCreator = () => {
       };
   
       try {
-        const response = await axios.post('http://localhost:8000/api/questions/', questionData, {
+        const response = await axios.post('https://onlinetestcreationbackend.onrender.com/api/questions/', questionData, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,
@@ -151,13 +151,13 @@ const QuestionCreator = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontSize: "1rem" }}>
-          Skill Bridge Online Test Platform
+          SkillBridge Online Test Platform
           </Typography>
-          <Button color="inherit">Home</Button>
-          <Button color="inherit">Admin Profile</Button>
-          <Button color="inherit">Test List</Button>
-          <Button color="inherit">Settings</Button>
-          <Button color="inherit">Logout</Button>
+          <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
+          <Button color="inherit" onClick={() => navigate("/admin-profile")}>Admin Profile</Button>
+          <Button color="inherit" onClick={() => navigate("/manage-tests")}>Test List</Button>
+          <Button color="inherit" onClick={() => navigate("/adminsettings")}>Settings</Button>
+          <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
         </Toolbar>
       </AppBar>
 
@@ -182,12 +182,13 @@ const QuestionCreator = () => {
                       <ListItem button onClick={() => navigate('/testcreation')}>
                         <ListItemText primary="Test Creation" />
                       </ListItem>
+                                  <ListItem button onClick={() => navigate('/questioncreation')}>
+                                    <ListItemText primary="Question Creation" />
+                                  </ListItem>
                       <ListItem button onClick={() => navigate('/manage-tests')}>
                         <ListItemText primary="Manage Tests" />
                       </ListItem>
-                      <ListItem button onClick={() => navigate('/userresponse')}>
-                        <ListItemText primary="Test Analytics" />
-                      </ListItem>
+
                       <ListItem button onClick={() => navigate('/announcement')}>
                         <ListItemText primary="Announcements" />
                       </ListItem>
@@ -423,18 +424,12 @@ const QuestionCreator = () => {
           }}
         >
           <Typography variant="body2" sx={{ color: "white", marginBottom: "2px" }}>
-            © {new Date().getFullYear()} Skill Bridge Online Test Platform. All rights reserved.
+            © {new Date().getFullYear()} SkillBridge Online Test Platform. All rights reserved.
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "2px" }}>
-            <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}>
-              <TwitterIcon />
-            </IconButton>
-            <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}>
-              <FacebookIcon />
-            </IconButton>
-            <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}>
-              <InstagramIcon />
-            </IconButton>
+            <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}><TwitterIcon /></IconButton>
+            <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}><FacebookIcon /></IconButton>
+            <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}><InstagramIcon /></IconButton>
           </Box>
         </Box>
       </Box>

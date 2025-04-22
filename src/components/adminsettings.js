@@ -24,8 +24,8 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon, Brightness4, Brightness7, AdminPanelSettings, Save, Undo, Notifications as NotificationsIcon, People, Security, Settings, AssignmentInd as AssignmentIndIcon, Lock as LockIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/Image20210206041010-1024x518.png";
-import API from "./services";
+import logo from "../assets/Image20250320122406.png";
+
 const AdminSettingsPage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [userManagement, setUserManagement] = useState("Manage Users");
@@ -39,9 +39,9 @@ const AdminSettingsPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [settingsId, setSettingsId] = useState(null); // State to hold the settings ID
-  
+
   const navigate = useNavigate();
-  const API_BASE_URL = 'http://127.0.0.1:8000/api/admin-settings/'; // Adjust the URL as needed
+  const API_BASE_URL = 'https://onlinetestcreationbackend.onrender.com/api/admin-settings/'; // Adjust the URL as needed
 
   useEffect(() => {
     document.body.style.backgroundColor = darkMode ? "#121212" : "#f8f9fa";
@@ -247,13 +247,11 @@ const AdminSettingsPage = () => {
           <ListItem button onClick={() => navigate('/manage-tests')}>
             <ListItemText primary="Manage Tests" />
           </ListItem>
-          <ListItem button onClick={() => navigate('/userresponse')}>
-            <ListItemText primary="Test Analytics" />
-          </ListItem>
+
           <ListItem button onClick={() => navigate('/announcement')}>
             <ListItemText primary="Announcements" />
           </ListItem>
-          <ListItem button onClick={() => navigate('/adminSettings')}>
+          <ListItem button onClick={() => navigate('/adminsettings')}>
             <ListItemText primary="Settings" />
           </ListItem>
           <ListItem button onClick={() => {
@@ -280,12 +278,12 @@ const AdminSettingsPage = () => {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" sx={{ flexGrow: 1, fontSize: "1rem" }}>
-              Vdart Online Test Platform
+              SmartBridge Online Test Platform
             </Typography>
             <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
             <Button color="inherit" onClick={() => navigate("/admin-profile")}>Admin Profile</Button>
-            <Button color="inherit" onClick={() => navigate("/test-list")}>Test List</Button>
-            <Button color="inherit" onClick={() => navigate("/settings")}>Settings</Button>
+            <Button color="inherit" onClick={() => navigate("/manage-tests")}>Test List</Button>
+            <Button color="inherit" onClick={() => navigate("/adminsettings")}>Settings</Button>
             <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
           </Toolbar>
         </AppBar>
@@ -500,31 +498,26 @@ const AdminSettingsPage = () => {
 
       {/* Footer */}
       <Box
-        sx={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          width: "100%",
-          backgroundColor: "#003366",
-          color: "white",
-          padding: "16px",
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="body2" sx={{ color: "white", marginBottom: "2px" }}>
-          © {new Date().getFullYear()} Vdart Online Test Platform. All rights reserved.
-        </Typography>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: "2px", marginBottom: "8px", height: "0px" }}>
-          <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}>
-            <TwitterIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}>
-            <FacebookIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}>
-            <InstagramIcon />
-          </IconButton>
-        </Box>
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "#003366",
+            color: "white",
+            padding: "16px",
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="body2" sx={{ color: "white", marginBottom: "2px" }}>
+            © {new Date().getFullYear()} SmartBridge Online Test Platform. All rights reserved.
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: "2px", marginTop: "2px" }}>
+            <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}><TwitterIcon /></IconButton>
+            <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}><FacebookIcon /></IconButton>
+            <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}><InstagramIcon /></IconButton>
+          </Box>
+      
       </Box>
     </Box>
   );

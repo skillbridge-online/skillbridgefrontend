@@ -124,7 +124,7 @@ const questionTypes = {
     FILL_IN_THE_BLANKS: "fillintheblanks",
 };
 
-const API_BASE_URL = "http://127.0.0.1:8000/api";
+const API_BASE_URL = "https://onlinetestcreationbackend.onrender.com/api";
 
 export default function OnlineTestPage() {
     const { uuid } = useParams(); // ✅ Now we use uuid from the URL

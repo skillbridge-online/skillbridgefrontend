@@ -1,162 +1,207 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FaUser , FaUpload, FaEdit, FaEnvelope, FaLock, FaBook, FaPhone, FaGraduationCap, FaTrophy } from 'react-icons/fa';
-import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, Box, List, ListItem, ListItemText } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import { FaUser , FaUpload, FaEdit } from 'react-icons/fa';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Drawer,
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  Snackbar,
+  Alert,
+  Card,
+  CardContent,
+  Grid,
+  TextField,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import logo from "../assets/Image20210206041010-1024x518.png";
-import ReactCrop from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
-import axios from 'axios';
-
-// API Service
-const API_URL = 'http://127.0.0.1:8000/api'; // Replace with your actual backend URL
-
-const fetchUsers = async () => {
-  const userToken = localStorage.getItem("user_token"); // Retrieve the user token from local storage
-  const response = await axios.get(`${API_URL}/profile/`, {
-    headers: {
-      "Authorization": `Token ${userToken}`, // Include the token in the header
-    },
-  });
-  return response.data;
-};
-
-const fetchCourses = async () => {
-  const userToken = localStorage.getItem("user_token"); // Retrieve the user token from local storage
-  const response = await axios.get(`${API_URL}/courses/`, {
-    headers: {
-      "Authorization": `Token ${userToken}`, // Include the token in the header
-    },
-  });
-  return response.data;
-};
-
-const fetchEvaluationScores = async () => {
-  const userToken = localStorage.getItem("user_token"); // Retrieve the user token from local storage
-  const response = await axios.get(`${API_URL}/evaluation-scores/`, {
-    headers: {
-      "Authorization": `Token ${userToken}`, // Include the token in the header
-    },
-  });
-  return response.data;
-};
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
-  const [userData, setUserData] = useState({});
-  const [courses, setCourses] = useState([]);
-  const [topScores, setTopScores] = useState([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [image, setImage] = useState(null);
-  const [croppedImageUrl, setCroppedImageUrl] = useState(null);
-  const [crop, setCrop] = useState({ aspect: 1, unit: '%', width: 50, height: 50 });
   const [isEditing, setIsEditing] = useState(false);
-  const [isCropping, setIsCropping] = useState(false);
-  const imageRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const token = localStorage.getItem('user_token');
 
-  // Fetch data from the backend when the component mounts
+  const API_BASE_URL = 'https://onlinetestcreationbackend.onrender.com/api';
+  const USER_PROFILE_URL = `${API_BASE_URL}/users/`;
+  const UPLOAD_PROFILE_PICTURE_URL = `${API_BASE_URL}/users/upload_profile_picture/`; // For uploading profile picture
+  const CHANGE_PASSWORD_URL = `${API_BASE_URL}/users/change_password/`; // For changing password
+  const LOGOUT_URL = `${API_BASE_URL}/logout/`; // For logging out
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const users = await fetchUsers();
-        const coursesData = await fetchCourses();
-        const evaluationScores = await fetchEvaluationScores();
-
-        // Assuming you want the first user for demonstration
-        if (users.length > 0) {
-          setUserData(users[0]);
-        }
-        setCourses(coursesData);
-        setTopScores(evaluationScores);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+    const storedUserData = localStorage.getItem('user_data');
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+      if (JSON.parse(storedUserData).profile_picture) {
+        setImage(`${API_BASE_URL}${JSON.parse(storedUserData).profile_picture}`);
       }
-    };
+    } else {
+      fetchUserData();
+    }
+  }, [token]);
 
-    fetchData();
-  }, []);
+  const fetchUserData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(USER_PROFILE_URL, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setUserData(data);
+      if (data.profile_picture) {
+        setImage(`${API_BASE_URL}${data.profile_picture}`);
+      }
+      localStorage.setItem('user_data', JSON.stringify(data)); // Store user data in localStorage
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setErrorMessage('Failed to fetch user data. Please try again.');
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-        setCroppedImageUrl(null);
-        setIsCropping(true);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+      const formData = new FormData();
+      formData.append('profile_picture', file);
 
-  const handleCropChange = (newCrop) => {
-    setCrop(newCrop);
-  };
-
-  const handleCropComplete = (newCrop) => {
-    if (imageRef.current && newCrop.width && newCrop.height) {
-      getCroppedImg(imageRef.current, newCrop, 'croppedImage.jpeg').then((url) => {
-        setCroppedImageUrl(url);
-      });
-    }
-  };
-
-  const getCroppedImg = (image, crop, fileName) => {
-    const canvas = document.createElement('canvas');
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height
-    );
-
-    return new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          reject(new Error('Canvas is empty'));
-          return;
+      try {
+        const response = await fetch(UPLOAD_PROFILE_PICTURE_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${token}`,
+          },
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        blob.name = fileName;
-        resolve(window.URL.createObjectURL(blob));
-      }, 'image/jpeg');
-    });
-  };
-
-  const handleSaveProfilePicture = () => {
-    if (croppedImageUrl) {
-      setImage(croppedImageUrl);
-      setIsCropping(false);
-      setCroppedImageUrl(null);
+        const data = await response.json();
+        setImage(`${API_BASE_URL}${data.profile_picture}`);
+        setUserData((prevData) => ({ ...prevData, profile_picture: data.profile_picture }));
+        localStorage.setItem('user_data', JSON.stringify({ ...userData, profile_picture: data.profile_picture })); // Update localStorage
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+        setErrorMessage('Failed to upload profile picture. Please try again.');
+        setSnackbarOpen(true);
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    console.log('Profile Saved:', { userData, image });
-    setIsEditing(false);
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("full_name", userData.full_name);
+    formData.append("phone", userData.phone);
+    formData.append("email", userData.email);
+    formData.append("status", userData.status);
+    formData.append("linkedin", userData.linkedin);
+
+    try {
+      const response = await fetch(`${USER_PROFILE_URL}${userData.id}/`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Token ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setUserData(data);
+      localStorage.setItem('user_data', JSON.stringify(data)); // Update localStorage
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setErrorMessage("Failed to update profile. Please try again.");
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (newPassword === confirmPassword) {
+      setLoading(true);
+      try {
+        const response = await fetch(CHANGE_PASSWORD_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setIsChangingPassword(false);
+      } catch (error) {
+        console.error('Error changing password:', error);
+        setErrorMessage('Failed to change password. Please try again.');
+        setSnackbarOpen(true);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setErrorMessage('New password and confirm password do not match.');
+      setSnackbarOpen(true);
+    }
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(LOGOUT_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      localStorage.removeItem('user_token');
+      localStorage.removeItem('user_data');
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      setErrorMessage('Failed to logout. Please try again.');
+      setSnackbarOpen(true);
+    }
   };
-
-  const handleLogout = () => {
-    console.log('User  logged out');
-    // Add logout logic here (e.g., clear session, redirect to login page)
-  };
-
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -169,12 +214,12 @@ const Profile = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontSize: "1rem" }}>
-            Vdart Online Test Platform
+            Skill Bridge Online Test Platform
           </Typography>
-          <Button color="inherit" onClick={() => console.log("Navigate to Home")}>Home</Button>
-          <Button color="inherit" onClick={() => console.log("Navigate to User Profile")}>User  Profile</Button>
-          <Button color="inherit" onClick={() => console.log("Navigate to Test List")}>Test List</Button>
-          <Button color="inherit" onClick={() => console.log("Navigate to Settings")}>Settings</Button>
+          <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
+          <Button color="inherit" onClick={() => navigate("/user-profile")}>Profile</Button>
+          <Button color="inherit" onClick={() => navigate("/test-list")}>Test list</Button>
+          <Button color="inherit" onClick={() => navigate("/settings")}>Settings</Button>
           <Button color="inherit" onClick={handleLogout}>Logout</Button>
         </Toolbar>
       </AppBar>
@@ -182,7 +227,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-container">
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
       <Header />
 
       <Drawer anchor="left" open={isSidebarOpen} onClose={toggleSidebar}>
@@ -200,425 +245,309 @@ const Profile = () => {
             />
           )}
           <List>
-            <ListItem button onClick={() => console.log("Navigate to Dashboard")}>
+            <ListItem button onClick={() => navigate('/user-dashboard')}>
               <ListItemText primary="Dashboard" />
             </ListItem>
-            <ListItem button onClick={() => console.log("Navigate to Available Tests")}>
-              <ListItemText primary="Available Tests" />
-            </ListItem>
-            <ListItem button onClick={() => console.log("Navigate to Attempted Tests")}>
+            <ListItem button onClick={() => navigate('/attempted-tests')}>
               <ListItemText primary="Attempted Tests" />
             </ListItem>
-            <ListItem button onClick={() => console.log("Navigate to Performance History")}>
+            <ListItem button onClick={() => navigate('/performancehistory')}>
               <ListItemText primary="Performance History" />
             </ListItem>
-            <ListItem button onClick={() => console.log("Navigate to Leaderboard")}>
-              <ListItemText primary="Leaderboard" />
-            </ListItem>
-            <ListItem button onClick={() => console.log("Navigate to Settings")}>
+            <ListItem button onClick={() => navigate('/usersetting')}>
               <ListItemText primary="Settings" />
             </ListItem>
-            <ListItem button onClick={handleLogout}>
+            <ListItem button onClick={() => navigate('/logout')}>
               <ListItemText primary="Logout" />
             </ListItem>
           </List>
         </Box>
       </Drawer>
 
-      <style>
-        {`
-          .profile-container {
-            display: flex;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9f9f9;
-            min-height: 130vh;
-            min-width: 150vh;
-          }
-
-          .profile-content {
-            flex: 1;
-            padding: 30px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px;
-            border-radius: 10px;
-          }
-
-          .profile-content h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #2c3e50;
-          }
-
-          .image-upload {
-            text-align: center;
-            margin-bottom: 20px;
-          }
-
-          .profile-pic {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #003366;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-          }
-
-          .profile-pic:hover {
-            transform: scale(1.1);
-          }
-
-          .upload-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background-color: #003366;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 5px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-          }
-
-          .upload-button:hover {
-            background-color: rgb(11, 13, 107);
-            transform: translateY(-2px);
-          }
-
-          .form-group {
-            margin-bottom: 20px;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-          }
-
-          .form-group label {
-            display: block;
-            font-size: 16px;
-            color:rgb(0, 37, 73);
-            margin-bottom: 8px;
-          }
-
-          .form-group input {
-            width: 200%; /* Set width to 100% of the parent */
-            max-width: 400px; /* Optional: Set a max width for larger screens */
-            padding: 15px 15px 15px 40px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 18px;
-            color: #333;
-            background-color: rgb(250, 248, 248);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-          }
-
-          .form-group input:focus {
-            border-color: #003366;
-            box-shadow: 0 0 8px rgb(8, 31, 75);
-            outline: none;
-          }
-
-          .form-group small {
-            display: block;
-            margin-top: 5px;
-            font-size: 12px;
-            color: #777;
-          }
-
-          .form-group .icon {
-            position: absolute;
-            left: 10px;
-            top: 60%;
-            transform: translateY(-50%);
-            color: #003366;
-          }
-
-          .save-button {
-            width: 100%;
-            background-color: #003366;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 100;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-          }
-
-          .save-button:hover {
-            background-color: #003366;
-            transform: translateY(-1px);
-          }
-
-          .edit-button {
-            background-color: #3498db;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            margin-bottom: 20px;
-          }
-
-          .edit-button:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-          }
-
-          .two-column-layout {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-          }
-
-          .column {
-            flex: 1;
-            display: flex;
-            flex-direction: column; /* Ensure children stack vertically */
-          }
-
-          .column:first-child {
-            max-width: 50%;
-          }
-
-          .column:last-child {
-            max-width: 50%;
-          }
-
-          .courses-section, .top-scores-section {
-            margin-top: 1px;
-          }
-
-          .courses-list, .top-scores-list {
-            display: flex;
-            flex-direction: column; /* Stack cards vertically */
-            gap: 15px;
-          }
-
-          .course-card, .score-card {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            width: 95%; /* Full width */
-            height: 82%;
-            box-shadow: 0 2px 5px rgba(192, 33, 33, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          }
-
-          .course-card:hover, .score-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(88, 53, 53, 0.2);
-          }
-
-          .detail-card {
-            background-color: #f8f9fa;
-            padding: 40px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-          }
-
-          .footer {
-            text-align: center;
-            padding: 2px 0;
-            background-color: #003366;
-            color: #fff;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-          }
-
-          .footer .social-icons {
-            display: flex;
-            justify-content: center;
-            margin-top: 8px;
-          }
-
-          .footer .social-icons .icon-button {
-            color: inherit;
-          }
-        `}
-      </style>
-
-      <div className="profile-content">
-        <h1>Profile</h1>
-        {!isEditing && (
-          <button className="edit-button" onClick={handleEdit}>
-            <FaEdit /> Edit Profile
-          </button>
-        )}
-        <div className="image-upload">
-          {image ? (
-            <img src={image} alt="Profile" className="profile-pic" />
-          ) : (
-            <FaUser  size={80} />
-          )}
-          {isEditing && (
-            <label htmlFor="upload-image" className="upload-button">
-              <FaUpload /> Upload Image
-            </label>
-          )}
-          <input
-            type="file"
-            id="upload-image"
-            accept="image/*"
-            onChange={handleImageUpload}
-            style={{ display: 'none' }}
-          />
-        </div>
-
-        {isCropping && image && (
-          <div style={{ position: 'relative', width: '300px', height: '300px' }}>
-            <ReactCrop
-              src={image}
-              crop={crop}
-              onChange={handleCropChange}
-              onComplete={handleCropComplete}
-            >
-              <img ref={imageRef} src={image} alt="Upload" style={{ maxWidth: '100%', maxHeight: '100%' }} />
-            </ReactCrop>
-            {croppedImageUrl && (
-              <div style={{ marginTop: '10px' }}>
-                <img src={croppedImageUrl} alt="Cropped" style={{ width: '100px', height: '100px' }} />
-                <button onClick={handleSaveProfilePicture} className="save-button">Save Cropped Image</button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {isEditing ? (
-          <div className="two-column-layout">
-            <div className="column">
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Full Name</label>
-                  <div className="icon">
-                    <FaUser  />
-                  </div>
-                  <input
-                    type="text"
-                    value={userData.full_name || ''}
-                    onChange={(e) => setUserData({ ...userData, fullName: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Phone</label>
-                  <div className="icon">
-                    <FaPhone />
-                  </div>
-                  <input
-                    type="text"
-                    value={userData.phone || ''}
-                    onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
-                    required
-                  />
-                  <small>We collect this in case of emergencies.</small>
-                </div>
-
-                <div className="form-group">
-                  <label>Email Address</label>
-                  <div className="icon">
-                    <FaEnvelope />
-                  </div>
-                  <input
-                    type="email"
-                    value={userData.email || ''}
-                    onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Password</label>
-                  <div className="icon">
-                    <FaLock />
-                  </div>
-                  <input
-                    type="password"
-                    value={userData.password || ''}
-                    onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <button type="submit" className="save-button">Save Profile</button>
-              </form>
-            </div>
-          </div>
-        ) : (
-          <div className="two-column-layout">
-            <div className="column">
-              <div className="detail-card">
-                <FaUser  /> <strong>Full Name:</strong> {userData.full_name || "N/A"}
-              </div>
-              <div className="detail-card">
-                <FaPhone /> <strong>Phone:</strong> {userData.phone || "N/A"}
-              </div>
-              <div className="detail-card">
-                <FaEnvelope /> <strong>Email:</strong> {userData.email || "N/A"}
-              </div>
-              <div className="detail-card">
-                <FaLock /> <strong>Password:</strong> ********
-              </div>
-            </div>
-
-            <div className="column">
-              <div className="top-scores-section">
-                <div className="score-card">
-                  <h2><FaTrophy /> Top Scores</h2>
-                  <div className="top-scores-list" style={{ marginTop: '20px' }}>
-                    {topScores.map((score, index) => (
-                      <div key={index} className="score-card">
-                        <FaBook /> {score.testName}: {score.score}%
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="courses-section">
-                <div className="course-card">
-                  <h2><FaGraduationCap /> My Courses</h2>
-                  <div className="courses-list">
-                    {courses.map((course, index) => (
-                      <div key={index} className="course-card">
-                        <FaBook /> {course.name} {/* Assuming course has a name property */}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <Box sx={{ backgroundColor: "#003366", position: "fixed", bottom: 0, left: 0, right: 0, color: "white", padding: "2px", textAlign: "center" }}>
-        <Typography variant="body2" sx={{ color: "white", marginBottom: "8px" }}>
-          © {new Date().getFullYear()} Vdart Online Test Platform. All rights reserved.
+      <Box
+  sx={{
+    flex: 1,
+    p: 3,
+    marginTop: "64px",
+    display: "flex",
+    alignItems: "stretch",
+  }}
+>
+  <Grid container spacing={2}>
+    {/* Left Side - User Profile */}
+    <Grid item xs={12} md={4}>
+      <Card
+        sx={{
+          borderRadius: 2,
+          boxShadow: 3,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <Typography
+          variant="h5"
+          sx={{ mb: 2, fontWeight: "bold", color: "#003366" }}
+        >
+          <center>User Profile</center>
         </Typography>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "8px" }}>
-          <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}><TwitterIcon /></IconButton>
-          <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}><FacebookIcon /></IconButton>
-          <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}><InstagramIcon /></IconButton>
+        <CardContent sx={{ textAlign: "center" }}>
+          <Box sx={{ position: "relative", display: "inline-block" }}>
+            {image ? (
+              <img
+                src={image}
+                alt="Profile"
+                style={{
+                  width: "120px",
+                  height: "120px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "4px solid #003366",
+                }}
+              />
+            ) : (
+              <FaUser size={80} style={{ color: "#003366" }} />
+            )}
+            {isEditing && (
+              <label htmlFor="upload-image" style={{ cursor: "pointer" }}>
+                <FaUpload
+                  style={{
+                    position: "absolute",
+                    bottom: "0",
+                    right: "0",
+                    backgroundColor: "#003366",
+                    color: "#fff",
+                    padding: "8px",
+                    borderRadius: "50%",
+                  }}
+                />
+              </label>
+            )}
+            <input
+              type="file"
+              id="upload-image"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ display: "none" }}
+            />
+          </Box>
+          <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
+            {userData ? userData.full_name : "N/A"}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            {userData ? userData.role : "N/A"}
+          </Typography>
+          {!isEditing && (
+            <Button
+              variant="contained"
+              startIcon={<FaEdit />}
+              onClick={() => setIsEditing(true)}
+              sx={{
+                mt: 2,
+                backgroundColor: "#003366",
+                "&:hover": { backgroundColor: "#002244" },
+              }}
+            >
+              Edit Profile
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    </Grid>
+
+    {/* Right Side - Profile Information & Security Settings */}
+    <Grid item xs={12} md={8}>
+      <Grid container spacing={2}>
+        {/* Profile Information */}
+        <Grid item xs={12}>
+           <Card sx={{ borderRadius: 2, boxShadow: 3, flexGrow: 1 }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+                Profile Information
+              </Typography>
+              {isEditing ? (
+                <form onSubmit={handleProfileSubmit}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Full Name"
+                        value={userData ? userData.full_name : ""}
+                        onChange={(e) =>
+                          setUserData({ ...userData, full_name: e.target.value })
+                        }
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Phone"
+                        value={userData ? userData.phone : ""}
+                        onChange={(e) =>
+                          setUserData({ ...userData, phone: e.target.value })
+                        }
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        type="email"
+                        value={userData ? userData.email : ""}
+                        onChange={(e) =>
+                          setUserData({ ...userData, email: e.target.value })
+                        }
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Status"
+                        value={userData ? userData.status : ""}
+                        onChange={(e) =>
+                          setUserData({ ...userData, status: e.target.value })
+                        }
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Role"
+                        value={userData.role}
+                        InputProps={{ readOnly: true }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="LinkedIn"
+                        value={userData ? userData.linkedin : ""}
+                        onChange={(e) =>
+                          setUserData({ ...userData, linkedin: e.target.value })
+                        }
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#003366",
+                          "&:hover": { backgroundColor: "#002244" },
+                        }}
+                      >
+                        Save Profile
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+              ) : (
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body1">
+                      <strong>Full Name:</strong> {userData ? userData.full_name : "N/A"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body1">
+                      <strong>Phone:</strong> {userData ? userData.phone : "N/A"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body1">
+                      <strong>Email:</strong> {userData ? userData.email : "N/A"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body1">
+                      <strong>Status:</strong> {userData ? userData.status : "N/A"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body1">
+                      <strong>Role:</strong> {userData ? userData.role : "N/A"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body1">
+                      <strong>LinkedIn:</strong>{" "}
+                      {userData ? (
+                        <a href={userData.linkedin} target="_blank" rel="noopener noreferrer">
+                          {userData.linkedin}
+                        </a>
+                      ) : (
+                        "N/A"
+                      )}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Security Settings */}
+        <Grid item xs={12}>
+        <Card sx={{ borderRadius: 2, boxShadow: 3, flexGrow: 1, mt: 2 }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+                Security Settings
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={() => setIsChangingPassword(!isChangingPassword)}
+                sx={{ backgroundColor: "#003366", "&:hover": { backgroundColor: "#002244" } }}
+              >
+                Change Password
+              </Button>
+              {isChangingPassword && (
+                <form onSubmit={handleChangePassword} style={{ marginTop: "20px" }}>
+                  <TextField fullWidth label="Current Password" type="password" required />
+                  <TextField fullWidth label="New Password" type="password" required />
+                  <TextField fullWidth label="Confirm New Password" type="password" required />
+                  <Button type="submit" variant="contained">Submit</Button>
+                </form>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Grid>
+  </Grid>
+</Box>
+      <Box sx={{ backgroundColor: "#003366", color: "white", textAlign: "center", py: 2 }}>
+        <Typography variant="body2">
+          {new Date().getFullYear()} Skill Bridge Online Test Platform. All rights reserved.
+        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 1 }}>
+          <IconButton color="inherit" onClick={() => window.open("https://twitter.com", "_blank")}>
+            <TwitterIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => window.open("https://facebook.com", "_blank")}>
+            <FacebookIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => window.open("https://instagram.com", "_blank")}>
+            <InstagramIcon />
+          </IconButton>
         </Box>
       </Box>
-    </div>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="error" sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 

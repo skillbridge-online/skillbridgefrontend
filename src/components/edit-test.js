@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API from "./services";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -28,7 +28,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import MuiAlert from '@mui/material/Alert';
 import logo from "../assets/Image20210206041010-1024x518.png";
 import { useParams } from "react-router-dom"; 
-const API_BASE_URL = "http://localhost:8000/api/questions/";
+const API_BASE_URL = "https://onlinetestcreationbackend.onrender.com/api/questions/";
 
 const EditTestPage = () => {
   const { testId } = useParams(); // Get test ID from the URL
@@ -101,7 +101,7 @@ const EditTestPage = () => {
     const questionId = questions[index].id;
 
     try {
-      await API.delete(`/api/questions/${testId}/`, {
+      await axios.delete(`${API_BASE_URL}${testId}/`, {
         headers: { Authorization: `Token ${token()}` },
       });
       const updatedQuestions = questions.filter((_, idx) => idx !== index);
@@ -140,7 +140,7 @@ const EditTestPage = () => {
     };
 
     try {
-      await API.put(`/api/questions/${question.id}/`, updatedQuestion, {
+      await axios.put(`${API_BASE_URL}${question.id}/`, updatedQuestion, {
         headers: { Authorization: `Token ${token()}` },
       });
       showSnackbar("Question saved successfully!");
@@ -163,7 +163,7 @@ const EditTestPage = () => {
   const fetchQuestions = async () => {
     setLoading(true);
     try {
-      const response = await API.get(`/api/tests/${testId}/`, {
+      const response = await axios.get(`https://onlinetestcreationbackend.onrender.com/api/tests/${testId}/`, {
         headers: { Authorization: `Token ${token()}` },
       });
       
@@ -199,7 +199,7 @@ const EditTestPage = () => {
                 <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
                 <Button color="inherit" onClick={() => navigate("/admin-profile")}>Admin profile</Button>
                 <Button color="inherit" onClick={() => navigate("/manage-tests")}>Test List</Button>
-                <Button color="inherit" onClick={() => navigate("/settings")}>Settings</Button>
+                <Button color="inherit" onClick={() => navigate("/adminsettings")}>Settings</Button>
                 <Button color="inherit" onClick={() => navigate("/logout")}>Logout</Button>
             </Toolbar>
       </AppBar>
@@ -213,13 +213,33 @@ const EditTestPage = () => {
               style={{ maxWidth: "80%", height: "auto", marginBottom: "12px", borderRadius: "8px" }}
             />
           )}
-          <List>
-            {['Dashboard', 'Create a Test', 'Manage Tests', 'Test Analytics', 'Announcements', 'Settings', 'Logout'].map(item => (
-              <ListItem button key={item}>
-                <ListItemText primary={item} />
-              </ListItem>
-            ))}
-          </List>
+        <List>
+          <ListItem button onClick={() => navigate('/admin-dashboard')}>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/testcreation')}>
+            <ListItemText primary="Test Creation" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/questioncreation')}>
+            <ListItemText primary="Question Creation" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/manage-tests')}>
+            <ListItemText primary="Manage Tests" />
+          </ListItem>
+
+          <ListItem button onClick={() => navigate('/announcement')}>
+            <ListItemText primary="Announcements" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/adminsettings')}>
+            <ListItemText primary="Settings" />
+          </ListItem>
+          <ListItem button onClick={() => {
+            localStorage.removeItem('user_token');
+            navigate('/login');
+          }}>
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List>
         </Box>
       </Drawer>
 
