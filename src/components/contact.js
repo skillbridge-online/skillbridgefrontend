@@ -13,7 +13,7 @@ const ContactPage = () => {
 // Function to fetch admin notifications
 const fetchAdminNotifications = async () => {
   try {
-    const apiUrl = process.env.REACT_APP_API_URL || "https://onlinetestcreationbackend.onrender.com";
+    const apiUrl = process.env.REACT_APP_API_URL || "https://onlineplatform.onrender.com";
     
     // Retrieve user_token from localStorage (or wherever you store it after login)
     const userToken = localStorage.getItem("user_token");
@@ -49,7 +49,7 @@ const handleSubmit = async (event) => {
   }
 
   try {
-    const apiUrl = process.env.REACT_APP_API_URL || "https://onlinetestcreationbackend.onrender.com";
+    const apiUrl = process.env.REACT_APP_API_URL || "https://onlineplatform.onrender.com";
 
     await axios.post(`${apiUrl}/api/contact-submissions/`, {
       name,

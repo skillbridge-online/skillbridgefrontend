@@ -29,7 +29,7 @@ import { MoreVert, Edit,ContentCopy, Delete, Menu as MenuIcon } from "@mui/icons
 import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import logo from "../assets/Image20210206041010-1024x518.png";
+import logo from "../assets/Image20250320122406.png";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "https://onlineplatform.onrender.com"; // Base URL
@@ -243,10 +243,6 @@ const ManageTestsPage = () => {
 <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
   <MenuItem onClick={handleEditTest}>
     <Edit fontSize="small" sx={{ mr: 1 }} /> Edit
-  </MenuItem>
-
-  <MenuItem onClick={handleDuplicateTest}>
-    <ContentCopy fontSize="small" sx={{ mr: 1 }} /> Duplicate Test
   </MenuItem>
 
   <MenuItem onClick={handleDeleteTest}>

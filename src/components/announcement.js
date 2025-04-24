@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/Image20210206041010-1024x518.png";
+import logo from "../assets/Image20250320122406.png";
 import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -48,7 +48,7 @@ export default function AnnouncementsPage() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const API_BASE_URL = "https://onlineplatform.onrender.com/api/"; // Ensure your Django URL config is correct
+  const API_BASE_URL = "https://onlineplatform.onrender.comapi/"; // Ensure your Django URL config is correct
   const token = localStorage.getItem("user_token");
   const navigate = useNavigate();
 

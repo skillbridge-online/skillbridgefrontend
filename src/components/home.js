@@ -61,7 +61,7 @@ const HomePage = () => {
    
 
     axios
-      .get("https://onlinetestcreationbackend.onrender.com/api/performers/")
+      .get("https://onlineplatform.onrender.com/api/performers/")
       .then((response) => {
         setPerformers(response.data);
       })
@@ -70,7 +70,7 @@ const HomePage = () => {
       });
 
     axios
-      .get("https://onlinetestcreationbackend.onrender.com/api/features/")
+      .get("https://onlineplatform.onrender.com/api/features/")
       .then((response) => {
         setFeatures(response.data);
       })
@@ -80,7 +80,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("https://onlinetestcreationbackend.onrender.com/api/testimonials/")
+    axios.get("https://onlineplatform.onrender.com/api/testimonials/")
       .then(response => setTestimonials(response.data))
       .catch(error => console.error("Error fetching testimonials:", error));
   }, []);

@@ -130,7 +130,7 @@ const WebcamProctoring = ({ studentId, testId }) => {
 
         try {
             const response = await axios.post(
-                "https://onlinetestcreationbackend.onrender.com/api/log-malpractice/",
+                "https://onlineplatform.onrender.com/api/log-malpractice/",
                 data,
                 {
                     headers: {
@@ -359,7 +359,7 @@ const WebcamProctoring = ({ studentId, testId }) => {
                     try {
                         const token = localStorage.getItem("usertoken"); // Retrieve user token
                         const response = await axios.post(
-                            "https://onlinetestcreationbackend.onrender.com/api/log-malpractice/",
+                            "https://onlineplatform.onrender.com/api/log-malpractice/",
                             formData,
                             {
                                 headers: {

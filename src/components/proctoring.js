@@ -261,7 +261,7 @@ const Proctoring = () => {
 
         try {
           const response = await axios.post(
-            "https://onlinetestcreationbackend.onrender.com/api/analyze-frame/",
+            "hhttps://onlineplatform.onrender.com/api/analyze-frame/",
             formData,
             {
               headers: {

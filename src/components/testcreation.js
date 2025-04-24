@@ -5,6 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Form, useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import logo from "../assets/Image20250320122406.png";
 import TwitterIcon from '@mui/icons-material/Twitter';
 import Papa from "papaparse";
 import ImportQuestionsModal from './ImportQuestionModal';
@@ -1565,6 +1566,7 @@ const CreateNewTest = () => {
     <>
       <Drawer open={isSidebarOpen} onClose={toggleSidebar}>
         <Box sx={{ width: 220, textAlign: "center", padding: "12px" }}>
+          <img src={logo} alt="Logo" style={{ maxWidth: "100%", height: "auto", marginBottom: "12px" }} />
           <List>
             <ListItem button onClick={() => navigate("/admin-dashboard")}>
               <ListItemText primary="Dashboard" />

@@ -8,7 +8,7 @@ const AdminNotifications = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get('https://onlinetestcreationbackend.onrender.com/api/admin-notifications/');
+                const response = await axios.get('https://onlineplatform.onrender.com/api/admin-notifications/');
                 setNotifications(response.data);
             } catch (error) {
                 console.error("Error fetching admin notifications:", error);
