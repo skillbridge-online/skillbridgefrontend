@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import logo from "../assets/Image20250320122406.png";
+import logo from "../assets/Image20210206041010-1024x518.png";
 import {
   AppBar,
   Toolbar,
@@ -317,7 +317,31 @@ const sendDataToAttemptedTestsAPI = async (testId, testTitle, testSubject, perce
         <Alert onClose={() => setNotification("")} severity="info">{notification}</Alert>
       </Snackbar>
 
-      
+      <Dialog open={openModal} onClose={handleCloseReview} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ backgroundColor: "#003366", color: "#fff" }}>Review Questions</DialogTitle>
+        <DialogContent>
+          <Paper elevation={3} sx={{ padding: 2 }}>
+            {reviewData ? (
+              <div>
+                <Typography variant="h6" sx={{ marginBottom: 2 }}>All Questions:</Typography>
+                <ul>
+                  {reviewData.map((q, index) => (
+                    <li key={index}>
+                      <Typography variant="body1">{q.question} - <strong>{q.correct ? "Correct" : "Incorrect"}</strong> (Your answer: {q.answer})</Typography>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <Typography>No review data available.</Typography>
+            )}
+          </Paper>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseReview} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
+
       <Box
         sx={{
           position: "fixed",
