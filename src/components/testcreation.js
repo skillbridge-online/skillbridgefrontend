@@ -12,7 +12,8 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import ContentCopy from '@mui/icons-material/ContentCopy';
 const steps = ["Test Name & Description", "Question Creation", "Question Bank", "Set Time Limit & Marks", "Set Pass/Fail Criteria", "Settings", "Publish & Share"];
-const BASE_URL = "https://onlinetestplatformfrontend.vercel.app/smartbridge/online-test-assessment"; // Replace with your actual base URL
+const BASE_URL = "https://skillbridgefrontend.vercel.app/smartbridge/online-test-assessment"; // Replace with your actual base URL
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const CreateNewTest = () => {
         const [option, setOption] = useState(null);
         const [file, setFile] = useState(null);
@@ -72,7 +73,7 @@ const CreateNewTest = () => {
   };
   useEffect(() => {
     if (openSuccessDialog && testId) {
-        axios.get(`https://onlineplatform.onrender.com/api/get-secure-uuid/${testId}/`)
+        axios.get(`${API_BASE_URL}/get-secure-uuid/${testId}/`)
 
         .then((res) => {
           const encodedUuid = res.data.encoded_uuid;
@@ -92,7 +93,7 @@ const CreateNewTest = () => {
       }
 
       try {
-        const response = await axios.get("https://onlineplatform.onrender.com/api/questions/", {
+        const response = await axios.get(`${API_BASE_URL}/questions/`, {
           headers: {
             "Authorization": `Token ${userToken}`
           }
@@ -177,7 +178,7 @@ const CreateNewTest = () => {
     try {
       setLoading(true);
  
-      const response = await fetch("https://onlineplatform.onrender.com/api/upload-allowed-emails/", {
+      const response = await fetch(`${API_BASE_URL}/upload-allowed-emails/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -409,7 +410,7 @@ const handleSubmit = async () => {
 
         // Step 1: Create the test
         const response = await axios.post(
-            "https://onlineplatform.onrender.com/api/tests/",
+            `${API_BASE_URL}/tests/`,
             testData,
             {
                 headers: {
@@ -429,7 +430,7 @@ const handleSubmit = async () => {
             formData.append("test_id", newTestId);
 
             await axios.post(
-                "https://onlineplatform.onrender.com/api/questions/upload/",
+                `${API_BASE_URL}/questions/upload/`,
                 formData,
                 {
                     headers: {
@@ -472,7 +473,7 @@ const handleSubmit = async () => {
    
                 // Make the API call to save the question
                 const response = await axios.post(
-                    "https://onlineplatform.onrender.com/api/questions/",
+                    `${API_BASE_URL}/questions/`,
                     questionData,
                     {
                         headers: {

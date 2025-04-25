@@ -26,7 +26,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE_URL = "https://onlineplatform.onrender.com/api";
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 
 const AttemptedTest = () => {
   const [searchTerm, setSearchTerm] = useState("");

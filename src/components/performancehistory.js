@@ -12,7 +12,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/Image20250320122406.png";
 import axios from "axios"; // Import Axios
-
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const TestHistory = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,7 +31,7 @@ const TestHistory = () => {
 
     try {
         // Fetch performance history
-        const response = await fetch("https://onlineplatform.onrender.com/api/performance-history/", {
+        const response = await fetch(`${API_BASE_URL}/performance-history/`, {
             headers: { Authorization: `Token ${token}` },
         });
         if (!response.ok) {
@@ -73,7 +73,7 @@ const TestHistory = () => {
     }
 
     try {
-      const response = await axios.get("https://onlineplatform.onrender.com/api/performance-history/", performanceData, {
+      const response = await axios.get(`${API_BASE_URL}/performance-history/`, performanceData, {
         headers: { Authorization: `Token ${token}` },
       });
 

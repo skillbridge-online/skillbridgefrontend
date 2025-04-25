@@ -40,7 +40,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('user_token');
 
-  const API_BASE_URL = 'https://onlineplatform.onrender.com/api';
+  const API_BASE_URL = 'https://skillbridgebackend-hpgv.onrender.com/api';
   const USER_PROFILE_URL = `${API_BASE_URL}/users/`;
   const UPLOAD_PROFILE_PICTURE_URL = `${API_BASE_URL}/users/upload_profile_picture/`;
   const CHANGE_PASSWORD_URL = `${API_BASE_URL}/users/change_password/`;

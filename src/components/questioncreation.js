@@ -12,6 +12,7 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 import logo from "../assets/Image20250320122406.png";
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const QuestionCreator = () => {
   const [questions, setQuestions] = useState([]);
   const [newOption, setNewOption] = useState('');
@@ -28,7 +29,7 @@ const QuestionCreator = () => {
     if (!token) return;
   
     try {
-      const response = await axios.get('https://onlineplatform.onrender.com//api/questions/', {
+      const response = await axios.get(`${API_BASE_URL}/questions/`, {
         headers: { 'Authorization': `Token ${token}` },
       });
   
@@ -78,7 +79,7 @@ const QuestionCreator = () => {
       };
   
       try {
-        const response = await axios.post('https://onlineplatform.onrender.com//api/questions/', questionData, {
+        const response = await axios.post(`${API_BASE_URL}/questions/`, questionData, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,

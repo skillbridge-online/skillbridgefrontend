@@ -41,7 +41,7 @@ const AdminSettingsPage = () => {
   const [settingsId, setSettingsId] = useState(null); // State to hold the settings ID
 
   const navigate = useNavigate();
-  const API_BASE_URL = 'https://onlineplatform.onrender.com/api/admin-settings/'; // Adjust the URL as needed
+  const API_BASE_URL = 'https://skillbridgebackend-hpgv.onrender.com/api/admin-settings/'; // Adjust the URL as needed
 
   useEffect(() => {
     document.body.style.backgroundColor = darkMode ? "#121212" : "#f8f9fa";

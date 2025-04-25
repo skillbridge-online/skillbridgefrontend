@@ -36,7 +36,7 @@ import TwitterIcon from '@mui/icons-material/Twitter'; // Import Twitter icon
 import FacebookIcon from '@mui/icons-material/Facebook'; // Import Facebook icon
 import InstagramIcon from '@mui/icons-material/Instagram'; // Import Instagram icon
 import axios from 'axios'; // Import axios for API calls
-
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const SettingsCustomizationPage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [testAccess, setTestAccess] = useState("public");
@@ -59,7 +59,7 @@ const SettingsCustomizationPage = () => {
       const headers = { Authorization: `Token ${token}` };
 
       try {
-        const response = await axios.get("https://onlineplatform.onrender.com/api/user-settings/", { headers });
+        const response = await axios.get(`${API_BASE_URL}/user-settings/`, { headers });
         const settings = response.data;
         setDarkMode(settings.dark_mode);
         setTestAccess(settings.test_access);
@@ -80,7 +80,7 @@ const SettingsCustomizationPage = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.post("https://onlineplatform.onrender.com/api/user-settings/reset/", {}, { headers });
+      await axios.post(`${API_BASE_URL}/user-settings/reset/`, {}, { headers });
       // Reset local state to default values
       setDarkMode(false);
       setTestAccess("public");
@@ -102,7 +102,7 @@ const SettingsCustomizationPage = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.put("https://onlineplatform.onrender.com/api/user-settings/", {
+      await axios.put(`${API_BASE_URL}/user-settings/`, {
         dark_mode: darkMode,
         test_access: testAccess,
         integration: integration,

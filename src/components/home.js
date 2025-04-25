@@ -44,7 +44,7 @@ import image6 from '../assets/6.jfif';
 import image7 from '../assets/7.jfif';
 import image9 from '../assets/9.jfif';
 import image10 from '../assets/10.jfif';
-
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const HomePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -61,7 +61,7 @@ const HomePage = () => {
    
 
     axios
-      .get("https://onlineplatform.onrender.com/api/performers/")
+      .get(`${API_BASE_URL}/performers/`)
       .then((response) => {
         setPerformers(response.data);
       })
@@ -70,7 +70,7 @@ const HomePage = () => {
       });
 
     axios
-      .get("https://onlineplatform.onrender.com/api/features/")
+      .get(`${API_BASE_URL}/features/`)
       .then((response) => {
         setFeatures(response.data);
       })
@@ -80,7 +80,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("https://onlineplatform.onrender.com/api/testimonials/")
+    axios.get(`${API_BASE_URL}/testimonials/`)
       .then(response => setTestimonials(response.data))
       .catch(error => console.error("Error fetching testimonials:", error));
   }, []);

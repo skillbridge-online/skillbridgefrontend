@@ -8,7 +8,7 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const styles = {
   container: {
     position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
@@ -31,7 +31,7 @@ const CoverPage = () => {
     const userToken = localStorage.getItem("user_token");
 
     if (uuid) {
-        axios.get(`https://onlineplatform.onrender.com/api/decode-test-uuid/${uuid}/`)
+        axios.get(`${API_BASE_URL}/decode-test-uuid/${uuid}/`)
         .then(res => {
           const decodedId = res.data.test_id;
           setTestId(decodedId);

@@ -22,6 +22,7 @@ import Dialog from '@mui/material/Dialog';
 
 import { PieChart,Pie, Tooltip, Cell, Legend } from "recharts";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const COLORS = ["#003366", "#0088FE", "#FFBB28", "#FF8042", "#00C49F"];
 const AdminDashboard = () => {
   const [userData, setUserData] = useState({});
@@ -43,6 +44,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   // Initialize chartData with default values
+
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -79,6 +81,7 @@ const AdminDashboard = () => {
     setOpenModal(false);
     navigate("/"); // Redirect to home or another page
   };
+  
   const fetchData = async () => {
       const token = localStorage.getItem('user_token');
       const headers = {
@@ -87,18 +90,18 @@ const AdminDashboard = () => {
       };
 
       try {
-        const userResponse = await axios.get('https://onlineplatform.onrender.com/api/userss/', { headers });
+        const userResponse = await axios.get(`${API_BASE_URL}/userss/`, { headers });
         setUserData(userResponse.data);
-        const dashboardResponse = await axios.get('https://onlineplatform.onrender.com/api/dashboard-overview/', { headers });
+        const dashboardResponse = await axios.get(`${API_BASE_URL}/dashboard-overview/`, { headers });
         setDashboardData(dashboardResponse.data);
-        const userManagementResponse = await axios.get("https://onlineplatform.onrender.com/api/user-management-stats/", { headers });
+        const userManagementResponse = await axios.get(`${API_BASE_URL}/user-management-stats/`, { headers });
         setUserManagement(userManagementResponse.data);
-        const response = await axios.get('https://onlineplatform.onrender.com/api/tests-data/', { headers });
+        const response = await axios.get(`${API_BASE_URL}/tests-data/`, { headers });
         setAnalyticsData(response.data);
 
         const [ feedbacksResponse] = await Promise.all([
           
-          axios.get('https://onlineplatform.onrender.com/api/feedbacks/', { headers }),
+          axios.get(`${API_BASE_URL}/feedbacks/`, { headers }),
         ]);
 
         setUserManagement(userManagementResponse.data);
@@ -113,7 +116,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await axios.get('https://onlineplatform.onrender.com/api/tests-management/');
+        const response = await axios.get(`${API_BASE_URL}/tests-management/`);
         setTests(response.data);
       } catch (error) {
         console.error("Error fetching tests:", error);
@@ -126,7 +129,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchCompletionRates = async () => {
       try {
-        const response = await axios.get('https://onlineplatform.onrender.com/api/test-completion-rates/');
+        const response = await axios.get(`${API_BASE_URL}/test-completion-rates/`);
         const completionRates = response.data;
 
         // Ensure completionRates is an object with expected structure
@@ -151,10 +154,10 @@ const AdminDashboard = () => {
 
   const fetchNotifications = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "https://onlineplatform.onrender.com";
+      
       const userToken = localStorage.getItem("user_token"); // Assuming token is stored in localStorage
   
-      const response = await axios.get(`${apiUrl}/api/admin-notifications/`, {
+      const response = await axios.get(`${API_BASE_URL}/admin-notifications/`, {
         headers: {
           Authorization: `Token ${userToken}`, // Adjust if using Bearer token
         },
@@ -177,11 +180,11 @@ const AdminDashboard = () => {
   
     // Mark all notifications as read
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "https://onlineplatform.onrender.com";
+    
       const userToken = localStorage.getItem("user_token");
   
       await axios.post(
-        `${apiUrl}/api/admin-notifications/mark-read/`, 
+        `${API_BASE_URL}/admin-notifications/mark-read/`, 
         {}, 
         {
           headers: {
@@ -208,7 +211,7 @@ const AdminDashboard = () => {
     const userToken = localStorage.getItem("user_token");
 
     axios
-      .get(`https://onlineplatform.onrender.com/api/users/${userData.id}/`, {
+      .get(`${API_BASE_URL}/users/${userData.id}/`, {
         headers: { Authorization: `Token ${userToken}` },
       })
       

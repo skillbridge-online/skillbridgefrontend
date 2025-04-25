@@ -124,7 +124,7 @@ const questionTypes = {
     FILL_IN_THE_BLANKS: "fillintheblanks",
 };
 
-const API_BASE_URL = "https://onlineplatform.onrender.com/api";
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 
 export default function OnlineTestPage() {
     const { uuid } = useParams(); // ✅ Now we use uuid from the URL

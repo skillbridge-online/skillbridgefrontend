@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import * as faceapi from "face-api.js";
-
+const API_BASE_URL = "https://skillbridgebackend-hpgv.onrender.com/api";
 const Proctoring = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -261,7 +261,7 @@ const Proctoring = () => {
 
         try {
           const response = await axios.post(
-            "hhttps://onlineplatform.onrender.com/api/analyze-frame/",
+            `${API_BASE_URL}/analyze-frame/`,
             formData,
             {
               headers: {
